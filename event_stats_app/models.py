@@ -2,13 +2,19 @@ from django.db import models
 from django.contrib.auth.models import User, Group
 
 
+# TODO: Привязать к auth.models.User ?
 class Participant(models.Model):
+    """
+    Модель представляет участника события
+    """
     first_name = models.CharField(max_length=64, verbose_name='Имя')
     middle_name = models.CharField(max_length=64, verbose_name='Отчество', null=True)
     last_name = models.CharField(max_length=64, verbose_name='Фамилия')
+    # TODO: сделать уникальным идентификатором
     email = models.EmailField()
-    # TODO: Придумать что делать при выборе нескольких направлений
+    # TODO: Найти как лучше всего представлять номер телефона
     # phone_number = models.Field
+    # TODO: Подумать нужно ли делать отдельный статус под человека (Т.е "Устроен")
     # status = models.OneToOneField()
     interested = models.ManyToManyField(User, related_name='interested_participants',
                                         verbose_name='Заинтересованные сотрудники', blank=True)
@@ -39,6 +45,7 @@ class Track(models.Model):
                                         verbose_name='Заинтересованные сотрудники', blank=True)
 
 
+# TODO: Придумать куда внести ссылки на тестовые задания, отзыв ментора и кто оставил отзыв
 class TrackUserStatus(models.Model):
     """
     Модель(таблица) для связи статуса участника в определенном треке
@@ -50,8 +57,10 @@ class TrackUserStatus(models.Model):
 
 
 class ParticipantStatus(models.Model):
+    """Модель статуса участника в треке"""
     name = models.CharField(max_length=16, verbose_name='Название статуса')
 
 
+# TODO: Придумать как инициализировать определенные группы сотрудников
 class MentorGroup(Group):
     pass
