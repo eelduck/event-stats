@@ -125,3 +125,7 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# TODO: После добавление кастомного юзера добавить путь до него
+# AUTH_USER_MODEL = 'путь.к.модели'
+# 'events_stat_app.models.MyUserModel'
