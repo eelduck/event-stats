@@ -39,7 +39,7 @@ class Track(models.Model):
     # https://docs.djangoproject.com/en/3.2/ref/models/fields/
     participants = models.ManyToManyField(User, related_name='tracks', verbose_name='Участники трэка',
                                           blank=True,
-                                          through='TrackUserStatus',
+                                          through='TrackChoice',
                                           through_fields=('track', 'participant')
                                           )
     interested = models.ManyToManyField(User, related_name='interested_tracks',
@@ -48,7 +48,7 @@ class Track(models.Model):
 
 # TODO Сделать отдельно модель отзыва, т.к там много параметров
 # TODO: Придумать куда внести ссылки на тестовые задания, отзыв ментора и кто оставил отзыв
-class TrackUserStatus(models.Model):
+class TrackChoice(models.Model):
     """
     Модель(таблица) для связи статуса участника в определенном треке
     """
@@ -62,6 +62,14 @@ class TrackUserStatus(models.Model):
         choices=ParticipantStatus.choices,
         default=ParticipantStatus.REGISTERED,
     )
+    feedback = models.ForeignKey('Feedback', on_delete=models.CASCADE)
+
+
+class Feedback(models.Model):
+    comment = models.TextField(blank=True)
+    last_modified = models.DateTimeField(auto_now=True)
+    # score = models.SmallIntegerField()
+    reviewer = models.ForeignKey(User, on_delete=models.CASCADE)
 
 # TODO: Придумать как инициализировать определенные группы сотрудников
 # Либо фикстуры, либо миграции, либо apps.py - есть инициализация приложения
