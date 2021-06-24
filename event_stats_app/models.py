@@ -28,6 +28,10 @@ class Event(models.Model):
     title = models.CharField(max_length=128, verbose_name='Название события')
     date = models.DateField(verbose_name='Дата начала события')
 
+    class Meta:
+        verbose_name = _('Событие')
+        verbose_name_plural = _('События')
+
 
 class Track(models.Model):
     """
@@ -45,6 +49,10 @@ class Track(models.Model):
     interested = models.ManyToManyField(User, related_name='interested_tracks',
                                         verbose_name='Заинтересованные сотрудники', blank=True)
 
+    class Meta:
+        verbose_name = _('Трек')
+        verbose_name_plural = _('Треки')
+
 
 # TODO Сделать отдельно модель отзыва, т.к там много параметров
 # TODO: Придумать куда внести ссылки на тестовые задания, отзыв ментора и кто оставил отзыв
@@ -55,13 +63,16 @@ class TrackChoice(models.Model):
     participant = models.ForeignKey(User, on_delete=models.CASCADE)
     track = models.ForeignKey(Track, on_delete=models.CASCADE)
     change_time = models.DateTimeField(auto_now=True)
-    # TODO: заменить на choices
     # TODO: добавить verbose name + plural
     status = models.CharField(
         max_length=32,
         choices=ParticipantStatus.choices,
         default=ParticipantStatus.REGISTERED,
     )
+
+    class Meta:
+        verbose_name = _('Выбор трека')
+        verbose_name_plural = _('Выбор треков')
 
 
 class Feedback(models.Model):
@@ -71,6 +82,10 @@ class Feedback(models.Model):
     reviewer = models.ForeignKey(User, on_delete=models.CASCADE)
     participant_track_choice = models.ForeignKey(TrackChoice, on_delete=models.CASCADE, related_name='feedback',
                                                  blank=True)
+
+    class Meta:
+        verbose_name = _('Отзыв')
+        verbose_name_plural = _('Отзывы')
 
 # TODO: Придумать как инициализировать определенные группы сотрудников
 # Либо фикстуры, либо миграции, либо apps.py - есть инициализация приложения
