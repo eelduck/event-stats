@@ -1,6 +1,16 @@
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 from core.models import User
+
+
+# TODO: Спросить про преимущества django-choices (если таковые есть)
+class ParticipantStatus(models.TextChoices):
+    REGISTERED = _('Зарегистрировался')
+    ON_REVIEW = _('На проверке')
+    ACCEPTED = _('Принят')
+    DENIED = _('Не принят')
+    # HIRED = _('Устроился')
 
 
 # from django.contrib.auth import get_user_model
@@ -9,6 +19,7 @@ from core.models import User
 # Когда создаешь собственную модель не нужно линковаться с ???
 # get_user_model
 # TODO: Спросить про момент из книги
+
 
 class Event(models.Model):
     """
@@ -47,13 +58,11 @@ class TrackUserStatus(models.Model):
     change_time = models.DateTimeField(auto_now=True)
     # TODO: заменить на choices
     # TODO: добавить verbose name + plural
-    status = models.ForeignKey('ParticipantStatus', on_delete=models.CASCADE)
-
-
-# TODO: Заменить на django-choices
-class ParticipantStatus(models.Model):
-    """Модель статуса участника в треке"""
-    name = models.CharField(max_length=16, verbose_name='Название статуса')
+    status = models.CharField(
+        max_length=32,
+        choices=ParticipantStatus.choices,
+        default=ParticipantStatus.REGISTERED,
+    )
 
 # TODO: Придумать как инициализировать определенные группы сотрудников
 # Либо фикстуры, либо миграции, либо apps.py - есть инициализация приложения
