@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from event_stats_app.models import Event, Track, TrackChoice
+from event_stats_app.models import Event, Track, TrackChoice, Feedback
 
 
 # TODO: Спросить: Стоит ли создавать отдельный раздел под участников через прокси модель?
@@ -16,5 +16,10 @@ class TrackAdmin(admin.ModelAdmin):
 
 
 @admin.register(TrackChoice)
-class TrackUserStatusAdmin(admin.ModelAdmin):
+class TrackChoiceAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Feedback)
+class FeedbackAdmin(admin.ModelAdmin):
     pass

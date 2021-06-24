@@ -62,14 +62,15 @@ class TrackChoice(models.Model):
         choices=ParticipantStatus.choices,
         default=ParticipantStatus.REGISTERED,
     )
-    feedback = models.ForeignKey('Feedback', on_delete=models.CASCADE)
 
 
 class Feedback(models.Model):
     comment = models.TextField(blank=True)
     last_modified = models.DateTimeField(auto_now=True)
-    # score = models.SmallIntegerField()
+    score = models.IntegerField(choices=((i, i) for i in range(1, 6)))
     reviewer = models.ForeignKey(User, on_delete=models.CASCADE)
+    participant_track_choice = models.ForeignKey(TrackChoice, on_delete=models.CASCADE, related_name='feedback',
+                                                 blank=True)
 
 # TODO: Придумать как инициализировать определенные группы сотрудников
 # Либо фикстуры, либо миграции, либо apps.py - есть инициализация приложения
