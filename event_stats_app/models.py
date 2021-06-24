@@ -1,6 +1,10 @@
-from django.contrib.auth import get_user_model
+# from django.contrib.auth import get_user_model
+
+
+# from django.contrib.auth.models import Group
 from django.db import models
-from django.contrib.auth.models import User, Group
+
+from core.models import User
 
 
 # Исопльзовать вместо User
@@ -12,8 +16,19 @@ from django.contrib.auth.models import User, Group
 # Можно перегрузить в модели метод save - он вызывается всего при нажатии кнопки сохранить
 # Он не вызывается при групповом удалении\добавлении
 
+# class QUser(AbstractBaseUser, PermissionsMixin):
+#     email = models.EmailField('email address', unique=True)
+#     first_name = models.CharField('first name', max_length=30, blank=True)
+#     last_name = models.CharField('last name', max_length=30, blank=True)
+#     date_joined = models.DateTimeField('date joined', auto_now_add=True)
+#     is_active = models.BooleanField('active', default=True)
+#     is_staff = models.BooleanField('staff', default=False)
+#     is_superuser = models.BooleanField('superuser', default=False)
+
+
 # TODO: Привязать к auth.models.User ?
 # Расширить модель User
+
 class Participant(models.Model):
     """
     Модель представляет участника события
@@ -28,7 +43,7 @@ class Participant(models.Model):
     # TODO: Подумать нужно ли делать отдельный статус под человека (Т.е "Устроен")
     # Хранить приоритетный статус
     # status = models.OneToOneField()
-    interested = models.ManyToManyField(get_user_model(), related_name='interested_participants',
+    interested = models.ManyToManyField(User, related_name='interested_participants',
                                         verbose_name='Заинтересованные сотрудники', blank=True)
 
 
@@ -76,12 +91,13 @@ class ParticipantStatus(models.Model):
     """Модель статуса участника в треке"""
     name = models.CharField(max_length=16, verbose_name='Название статуса')
 
-
 # TODO: Придумать как инициализировать определенные группы сотрудников
 # Либо фикстуры, либо миграции, либо apps.py - есть инициализация приложения
 # при apps.py можно сделать migrate при диплое, т.е добавить кастомную логику при каждой играции
 # прорверять сущестуют ли какие то группы или пользователи
 # либо сделать в utils функцию при вызове ...
 # лучший способ - писать кастомную миграцию (можно заполнять чем нужно)
-class MentorGroup(Group):
-    pass
+# class MentorGroup(Group):
+#     pass
+
+# Group: Mentor Сотрудник Участник

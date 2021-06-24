@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'event_stats_app.apps.EventStatsAppConfig',
+    'core.apps.CoreConfig',
 ]
 
 MIDDLEWARE = [
@@ -129,3 +130,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # TODO: После добавление кастомного юзера добавить путь до него
 # AUTH_USER_MODEL = 'путь.к.модели'
 # 'events_stat_app.models.MyUserModel'
+AUTH_USER_MODEL = 'core.User'
