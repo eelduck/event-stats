@@ -25,7 +25,7 @@ class Event(models.Model):
     """
     Данная модель хранит события (практикумы)
     """
-    name = models.CharField(max_length=128, verbose_name='Название события')
+    title = models.CharField(max_length=128, verbose_name='Название события')
     date = models.DateField(verbose_name='Дата начала события')
 
 
@@ -33,8 +33,7 @@ class Track(models.Model):
     """
     Данная модель представляет поток или трэк конкретного события
     """
-    # TODO: rename name to title
-    name = models.CharField(max_length=128, verbose_name='Название потока')
+    title = models.CharField(max_length=128, verbose_name='Название потока')
     event = models.ForeignKey('Event', on_delete=models.CASCADE, related_name='tracks', verbose_name='Событие')
     # https://docs.djangoproject.com/en/dev/topics/db/models/#extra-fields-on-many-to-many-relationships
     # https://docs.djangoproject.com/en/3.2/ref/models/fields/
