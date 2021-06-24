@@ -1,50 +1,14 @@
-# from django.contrib.auth import get_user_model
-# from django.contrib.auth.models import Group
-
 from django.db import models
 
 from core.models import User
 
 
-# Исопльзовать вместо User
-# Это дает быструю замену на твоих пользоватлей
+# from django.contrib.auth import get_user_model
+# Использовать вместо User
+# Это дает быструю замену на твоих пользователей
 # Когда создаешь собственную модель не нужно линковаться с ???
 # get_user_model
-
-
-# Можно перегрузить в модели метод save - он вызывается всего при нажатии кнопки сохранить
-# Он не вызывается при групповом удалении\добавлении
-
-# class QUser(AbstractBaseUser, PermissionsMixin):
-#     email = models.EmailField('email address', unique=True)
-#     first_name = models.CharField('first name', max_length=30, blank=True)
-#     last_name = models.CharField('last name', max_length=30, blank=True)
-#     date_joined = models.DateTimeField('date joined', auto_now_add=True)
-#     is_active = models.BooleanField('active', default=True)
-#     is_staff = models.BooleanField('staff', default=False)
-#     is_superuser = models.BooleanField('superuser', default=False)
-
-
-# TODO: Привязать к auth.models.User ?
-# Расширить модель User
-
-class Participant(models.Model):
-    """
-    Модель представляет участника события
-    """
-    first_name = models.CharField(max_length=64, verbose_name='Имя')
-    middle_name = models.CharField(max_length=64, verbose_name='Отчество', null=True)
-    last_name = models.CharField(max_length=64, verbose_name='Фамилия')
-    # TODO: сделать уникальным идентификатором
-    email = models.EmailField()
-    # TODO: Найти как лучше всего представлять номер телефона
-    # phone_number = models.Field
-    # TODO: Подумать нужно ли делать отдельный статус под человека (Т.е "Устроен")
-    # Хранить приоритетный статус
-    # status = models.OneToOneField()
-    interested = models.ManyToManyField(User, related_name='interested_participants',
-                                        verbose_name='Заинтересованные сотрудники', blank=True)
-
+# TODO: Спросить про момент из книги
 
 class Event(models.Model):
     """
@@ -63,7 +27,7 @@ class Track(models.Model):
     event = models.ForeignKey('Event', on_delete=models.CASCADE, related_name='tracks', verbose_name='Событие')
     # https://docs.djangoproject.com/en/dev/topics/db/models/#extra-fields-on-many-to-many-relationships
     # https://docs.djangoproject.com/en/3.2/ref/models/fields/
-    participants = models.ManyToManyField('Participant', related_name='tracks', verbose_name='Участники трэка',
+    participants = models.ManyToManyField(User, related_name='tracks', verbose_name='Участники трэка',
                                           blank=True,
                                           through='TrackUserStatus',
                                           through_fields=('track', 'participant')
@@ -78,7 +42,7 @@ class TrackUserStatus(models.Model):
     """
     Модель(таблица) для связи статуса участника в определенном треке
     """
-    participant = models.ForeignKey(Participant, on_delete=models.CASCADE)
+    participant = models.ForeignKey(User, on_delete=models.CASCADE)
     track = models.ForeignKey(Track, on_delete=models.CASCADE)
     change_time = models.DateTimeField(auto_now=True)
     # TODO: заменить на choices
@@ -86,6 +50,7 @@ class TrackUserStatus(models.Model):
     status = models.ForeignKey('ParticipantStatus', on_delete=models.CASCADE)
 
 
+# TODO: Заменить на django-choices
 class ParticipantStatus(models.Model):
     """Модель статуса участника в треке"""
     name = models.CharField(max_length=16, verbose_name='Название статуса')

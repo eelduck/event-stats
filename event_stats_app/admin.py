@@ -1,12 +1,9 @@
 from django.contrib import admin
 
-from event_stats_app.models import Participant, ParticipantStatus, Event, Track, TrackUserStatus
+from event_stats_app.models import ParticipantStatus, Event, Track, TrackUserStatus
 
 
-@admin.register(Participant)
-class ParticipantAdmin(admin.ModelAdmin):
-    pass
-
+# TODO: Спросить: Стоит ли создавать отдельный раздел под участников через прокси модель?
 
 @admin.register(ParticipantStatus)
 class ParticipantStatus(admin.ModelAdmin):

@@ -8,6 +8,11 @@ from django.utils.translation import gettext_lazy as _
 from core.managers import UserManager
 
 
+# TODO: Сделать вызов функции при изменении статуса
+# Можно перегрузить в модели метод save - он вызывается всего при нажатии кнопки сохранить
+# Он не вызывается при групповом удалении\добавлении
+# Либо реализовать через django-signals
+
 class User(AbstractBaseUser, PermissionsMixin):
     """
     An abstract base class implementing a fully featured User model with
@@ -20,6 +25,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_('email address'), unique=True)
     phone_number = models.CharField(_('phone number'), max_length=32, blank=True)
     city = models.CharField(_('city'), max_length=64, blank=True)
+
+    interested = models.ManyToManyField('User', related_name='interested_participants',
+                                        verbose_name='Заинтересованные сотрудники', blank=True)
 
     is_staff = models.BooleanField(
         _('staff status'),

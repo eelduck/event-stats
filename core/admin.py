@@ -32,6 +32,7 @@ class UserAdmin(admin.ModelAdmin):
             'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
         }),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
+        (_('Status monitoring'), {'fields': ('interested',)})
     )
     add_fieldsets = (
         (None, {
