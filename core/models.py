@@ -13,6 +13,7 @@ from core.managers import UserManager
 # Он не вызывается при групповом удалении\добавлении
 # Либо реализовать через django-signals
 
+# Переименовать
 class User(AbstractBaseUser, PermissionsMixin):
     """
     An abstract base class implementing a fully featured User model with

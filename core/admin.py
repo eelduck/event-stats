@@ -8,7 +8,9 @@ from django.contrib.auth.forms import (
 )
 from django.core.exceptions import PermissionDenied
 from django.db import router, transaction
+from django.forms import forms
 from django.http import Http404, HttpResponseRedirect
+from django.shortcuts import redirect, render
 from django.template.response import TemplateResponse
 from django.urls import path, reverse
 from django.utils.decorators import method_decorator
@@ -22,6 +24,12 @@ from core.utils import ExportCsvMixin
 
 csrf_protect_m = method_decorator(csrf_protect)
 sensitive_post_parameters_m = method_decorator(sensitive_post_parameters())
+
+import pandas as pd
+
+
+class ExcelImportForm(forms.Form):
+    excel_file = forms.FileField()
 
 
 @admin.register(User)
@@ -76,11 +84,28 @@ class UserAdmin(admin.ModelAdmin, ExportCsvMixin):
                        name='auth_user_password_change',
                    ),
                    # path('export_as_csv/', self._export_as_csv)
+                   path('import-excel/', self.import_excel)
                ] + super().get_urls()
 
     # def _export_as_csv(self, request):
     #     queryset = None
 
+    def import_excel(self, request):
+        if request.method == "POST":
+            # TODO: Найти где дается такое имя csv_file и сменить
+            print(request.FILES)
+            excel_file = request.FILES["excel_file"]
+            df = pd.read_excel(excel_file)
+            print(df)
+            # Create objects from passed in data
+            # ...
+            self.message_user(request, "Your excel file has been imported")
+            return redirect("..")
+        form = ExcelImportForm()
+        payload = {"form": form}
+        return render(
+            request, "core/excel_form.html", payload
+        )
 
     def lookup_allowed(self, lookup, value):
         # Don't allow lookups involving passwords.

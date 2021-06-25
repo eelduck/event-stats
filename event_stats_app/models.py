@@ -1,8 +1,10 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from core.models import User
 
+# get_user_model
 
 # TODO: Спросить про преимущества django-choices (если таковые есть)
 class ParticipantStatus(models.TextChoices):
@@ -54,8 +56,6 @@ class Track(models.Model):
         verbose_name_plural = _('Треки')
 
 
-# TODO Сделать отдельно модель отзыва, т.к там много параметров
-# TODO: Придумать куда внести ссылки на тестовые задания, отзыв ментора и кто оставил отзыв
 class TrackChoice(models.Model):
     """
     Модель(таблица) для связи статуса участника в определенном треке
@@ -63,7 +63,6 @@ class TrackChoice(models.Model):
     participant = models.ForeignKey(User, on_delete=models.CASCADE)
     track = models.ForeignKey(Track, on_delete=models.CASCADE)
     change_time = models.DateTimeField(auto_now=True)
-    # TODO: добавить verbose name + plural
     status = models.CharField(
         max_length=32,
         choices=ParticipantStatus.choices,
