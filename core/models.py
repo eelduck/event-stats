@@ -26,6 +26,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     phone_number = models.CharField(_('phone number'), max_length=32, blank=True)
     city = models.CharField(_('city'), max_length=64, blank=True)
 
+    # TODO: Стоит ли вынести с Participant Model?
     interested = models.ManyToManyField('User', related_name='interested_participants',
                                         verbose_name='Заинтересованные сотрудники', blank=True)
 
