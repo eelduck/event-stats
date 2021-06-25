@@ -34,6 +34,9 @@ class Event(models.Model):
         verbose_name = _('Событие')
         verbose_name_plural = _('События')
 
+    def __str__(self):
+        return f'{self.title} {self.date}'
+
 
 class Track(models.Model):
     """
@@ -55,6 +58,9 @@ class Track(models.Model):
         verbose_name = _('Трек')
         verbose_name_plural = _('Треки')
 
+    def __str__(self):
+        return f'Трек: {self.title} Событие: {self.event}'
+
 
 class TrackChoice(models.Model):
     """
@@ -73,18 +79,28 @@ class TrackChoice(models.Model):
         verbose_name = _('Выбор трека')
         verbose_name_plural = _('Выбор треков')
 
+    def __str__(self):
+        return f'{self.participant} {self.track}'
+
 
 class Feedback(models.Model):
     comment = models.TextField(blank=True)
     last_modified = models.DateTimeField(auto_now=True)
-    score = models.IntegerField(choices=((i, i) for i in range(1, 6)))
+    score = models.IntegerField(choices=((i, i) for i in range(1, 6)), verbose_name=_('Оценка'))
     reviewer = models.ForeignKey(User, on_delete=models.CASCADE)
-    participant_track_choice = models.ForeignKey(TrackChoice, on_delete=models.CASCADE, related_name='feedback',
-                                                 blank=True)
+    participant_track_choice = models.ForeignKey(
+        TrackChoice,
+        on_delete=models.CASCADE,
+        related_name='feedback',
+        blank=True
+    )
 
     class Meta:
         verbose_name = _('Отзыв')
         verbose_name_plural = _('Отзывы')
+
+    def __str__(self):
+        return f'{self.reviewer}'
 
 # TODO: Придумать как инициализировать определенные группы сотрудников
 # Либо фикстуры, либо миграции, либо apps.py - есть инициализация приложения
