@@ -4,7 +4,6 @@ from django.utils.translation import gettext_lazy as _
 
 from core.models import User
 
-# get_user_model
 
 # TODO: Спросить про преимущества django-choices (если таковые есть)
 class ParticipantStatus(models.TextChoices):
@@ -18,10 +17,11 @@ class ParticipantStatus(models.TextChoices):
 # from django.contrib.auth import get_user_model
 # Использовать вместо User
 # Это дает быструю замену на твоих пользователей
-# Когда создаешь собственную модель не нужно линковаться с ???
-# get_user_model
-# TODO: Спросить про момент из книги
+# TODO: Использовать get_user_model
 
+# TODO: Возможно стоит создать отдельно участника как прокси модель
+
+# TODO: Добавить всем Fields verbose_name
 
 class Event(models.Model):
     """
