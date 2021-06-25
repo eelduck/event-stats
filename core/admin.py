@@ -27,6 +27,7 @@ sensitive_post_parameters_m = method_decorator(sensitive_post_parameters())
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin, ExportCsvMixin):
     add_form_template = 'admin/auth/user/add_form.html'
+    change_list_template = 'core/user_changelist.html'
     change_user_password_template = None
     fieldsets = (
         (None, {'fields': ('password',)}),
@@ -74,7 +75,12 @@ class UserAdmin(admin.ModelAdmin, ExportCsvMixin):
                        self.admin_site.admin_view(self.user_change_password),
                        name='auth_user_password_change',
                    ),
+                   # path('export_as_csv/', self._export_as_csv)
                ] + super().get_urls()
+
+    # def _export_as_csv(self, request):
+    #     queryset = None
+
 
     def lookup_allowed(self, lookup, value):
         # Don't allow lookups involving passwords.
