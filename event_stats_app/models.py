@@ -6,6 +6,7 @@ from core.models import User
 from django.db.models import signals
 from django.dispatch import receiver
 
+
 # TODO: Спросить про преимущества django-choices (если таковые есть)
 class ParticipantStatus(models.TextChoices):
     REGISTERED = _('Зарегистрировался')
@@ -103,6 +104,7 @@ class Feedback(models.Model):
     def __str__(self):
         return f'{self.reviewer}'
 
+
 # TODO: Придумать как инициализировать определенные группы сотрудников
 # Либо фикстуры, либо миграции, либо apps.py - есть инициализация приложения
 # при apps.py можно сделать migrate при диплое, т.е добавить кастомную логику при каждой играции
@@ -118,6 +120,7 @@ class Group(models.Model):
     title = models.TextField(max_length=128, verbose_name='Название группы')
     description = models.TextField(max_length=255, verbose_name='Описание группы')
 
+
 class MentorGroup(models.Model):
     """
     Модель(таблица) для связи ментор - группа(группы)
@@ -131,11 +134,10 @@ class MentorGroup(models.Model):
         verbose_name_plural = _('Группы')
 
 
-
 # signals
 
 @receiver(signals.post_save, sender=TrackChoice)
 def notification(sender, instance, created, **kwargs):
-    print ("email участника: ", instance.participant.email)
-    print ("трек: ", instance.track.title)
-    print ("новый статус: ", instance.status)
+    print("email участника: ", instance.participant.email)
+    print("трек: ", instance.track.title)
+    print("новый статус: ", instance.status)
