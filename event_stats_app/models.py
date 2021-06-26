@@ -23,8 +23,6 @@ class ParticipantStatus(models.TextChoices):
 
 # TODO: Возможно стоит создать отдельно участника как прокси модель
 
-# TODO: Добавить всем Fields verbose_name
-
 class Event(models.Model):
     """
     Данная модель хранит события (практикумы)
@@ -44,17 +42,18 @@ class Track(models.Model):
     """
     Данная модель представляет поток или трэк конкретного события
     """
-    title = models.CharField(max_length=128, verbose_name='Название потока')
-    event = models.ForeignKey('Event', on_delete=models.CASCADE, related_name='tracks', verbose_name='Событие')
+    title = models.CharField(max_length=128, verbose_name=_('Название потока'))
+    event = models.ForeignKey('Event', on_delete=models.CASCADE, related_name='tracks', verbose_name=_('Событие'))
     # https://docs.djangoproject.com/en/dev/topics/db/models/#extra-fields-on-many-to-many-relationships
     # https://docs.djangoproject.com/en/3.2/ref/models/fields/
-    participants = models.ManyToManyField(User, related_name='tracks', verbose_name='Участники трэка',
+    participants = models.ManyToManyField(User, related_name='tracks',
+                                          verbose_name=_('Участники трэка'),
                                           blank=True,
                                           through='TrackChoice',
                                           through_fields=('track', 'participant')
                                           )
     interested = models.ManyToManyField(User, related_name='interested_tracks',
-                                        verbose_name='Заинтересованные сотрудники', blank=True)
+                                        verbose_name=_('Заинтересованные сотрудники'), blank=True)
 
     class Meta:
         verbose_name = _('Трек')
@@ -68,13 +67,14 @@ class TrackChoice(models.Model):
     """
     Модель(таблица) для связи статуса участника в определенном треке
     """
-    participant = models.ForeignKey(User, on_delete=models.CASCADE)
-    track = models.ForeignKey(Track, on_delete=models.CASCADE)
-    change_time = models.DateTimeField(auto_now=True)
+    participant = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('Участник'))
+    track = models.ForeignKey(Track, on_delete=models.CASCADE, verbose_name=_('Выбранный трек'))
+    change_time = models.DateTimeField(auto_now=True, verbose_name=_('Последнее время изменения'))
     status = models.CharField(
         max_length=32,
         choices=ParticipantStatus.choices,
         default=ParticipantStatus.REGISTERED,
+        verbose_name=_('Статус участника'),
     )
 
     class Meta:
@@ -86,15 +86,16 @@ class TrackChoice(models.Model):
 
 
 class Feedback(models.Model):
-    comment = models.TextField(blank=True)
-    last_modified = models.DateTimeField(auto_now=True)
+    comment = models.TextField(blank=True, verbose_name=_('Отзыв'))
+    last_modified = models.DateTimeField(auto_now=True, verbose_name=_('Последние изменения'))
     score = models.IntegerField(choices=((i, i) for i in range(1, 6)), verbose_name=_('Оценка'))
-    reviewer = models.ForeignKey(User, on_delete=models.CASCADE)
+    reviewer = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('Ревьювер'))
     participant_track_choice = models.ForeignKey(
         TrackChoice,
         on_delete=models.CASCADE,
         related_name='feedback',
-        blank=True
+        blank=True,
+        verbose_name=_('Выбор трека участником'),
     )
 
     class Meta:

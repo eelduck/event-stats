@@ -24,7 +24,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     # TODO: Стоит ли вынести с Participant Model?
     interested = models.ManyToManyField('User', related_name='interested_participants',
-                                        verbose_name='Заинтересованные сотрудники', blank=True)
+                                        verbose_name=_('Заинтересованные сотрудники'), blank=True)
 
     is_staff = models.BooleanField(
         _('staff status'),
