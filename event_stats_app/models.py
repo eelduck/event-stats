@@ -112,3 +112,19 @@ class Feedback(models.Model):
 #     pass
 
 # Group: Mentor Сотрудник Участник
+
+class Group(models.Model):
+    title = models.TextField(max_length=128, verbose_name='Название группы')
+    description = models.TextField(max_length=255, verbose_name='Описание группы')
+
+class MentorGroup(models.Model):
+    """
+    Модель(таблица) для связи ментор - группа(группы)
+    """
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    change_time = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = _('Группа')
+        verbose_name_plural = _('Группы')
