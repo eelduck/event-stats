@@ -24,10 +24,11 @@ class TrackAdmin(admin.ModelAdmin):
     search_fields = ('title',)
 
 
+# TODO: Добавить кастомную фильтрацию по дате
 @admin.register(TrackChoice)
 class TrackChoiceAdmin(admin.ModelAdmin):
     list_display = ('participant', 'track', 'status')
-    list_filter = ('status', 'track__title', 'track__event')
+    list_filter = ('status', 'track__title', 'track__event', 'track__event__date')
     search_fields = ('participant__email', 'track__title')
 
 
