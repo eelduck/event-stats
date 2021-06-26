@@ -5,6 +5,10 @@ name = "pypi"
 
 [packages]
 django = "*"
+pandas = "*"
+xlrd = "*"
+openpyxl = "*"
+jupyter = "*"
 
 [dev-packages]
 

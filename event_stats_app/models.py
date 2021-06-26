@@ -1,8 +1,10 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from core.models import User
-
+from django.db.models import signals
+from django.dispatch import receiver
 
 # TODO: Спросить про преимущества django-choices (если таковые есть)
 class ParticipantStatus(models.TextChoices):
@@ -16,10 +18,11 @@ class ParticipantStatus(models.TextChoices):
 # from django.contrib.auth import get_user_model
 # Использовать вместо User
 # Это дает быструю замену на твоих пользователей
-# Когда создаешь собственную модель не нужно линковаться с ???
-# get_user_model
-# TODO: Спросить про момент из книги
+# TODO: Использовать get_user_model
 
+# TODO: Возможно стоит создать отдельно участника как прокси модель
+
+# TODO: Добавить всем Fields verbose_name
 
 class Event(models.Model):
     """
@@ -31,6 +34,9 @@ class Event(models.Model):
     class Meta:
         verbose_name = _('Событие')
         verbose_name_plural = _('События')
+
+    def __str__(self):
+        return f'{self.title} {self.date}'
 
 
 class Track(models.Model):
@@ -53,9 +59,10 @@ class Track(models.Model):
         verbose_name = _('Трек')
         verbose_name_plural = _('Треки')
 
+    def __str__(self):
+        return f'Трек: {self.title} Событие: {self.event}'
 
-# TODO Сделать отдельно модель отзыва, т.к там много параметров
-# TODO: Придумать куда внести ссылки на тестовые задания, отзыв ментора и кто оставил отзыв
+
 class TrackChoice(models.Model):
     """
     Модель(таблица) для связи статуса участника в определенном треке
@@ -63,7 +70,6 @@ class TrackChoice(models.Model):
     participant = models.ForeignKey(User, on_delete=models.CASCADE)
     track = models.ForeignKey(Track, on_delete=models.CASCADE)
     change_time = models.DateTimeField(auto_now=True)
-    # TODO: добавить verbose name + plural
     status = models.CharField(
         max_length=32,
         choices=ParticipantStatus.choices,
@@ -74,18 +80,28 @@ class TrackChoice(models.Model):
         verbose_name = _('Выбор трека')
         verbose_name_plural = _('Выбор треков')
 
+    def __str__(self):
+        return f'{self.participant} {self.track}'
+
 
 class Feedback(models.Model):
     comment = models.TextField(blank=True)
     last_modified = models.DateTimeField(auto_now=True)
-    score = models.IntegerField(choices=((i, i) for i in range(1, 6)))
+    score = models.IntegerField(choices=((i, i) for i in range(1, 6)), verbose_name=_('Оценка'))
     reviewer = models.ForeignKey(User, on_delete=models.CASCADE)
-    participant_track_choice = models.ForeignKey(TrackChoice, on_delete=models.CASCADE, related_name='feedback',
-                                                 blank=True)
+    participant_track_choice = models.ForeignKey(
+        TrackChoice,
+        on_delete=models.CASCADE,
+        related_name='feedback',
+        blank=True
+    )
 
     class Meta:
         verbose_name = _('Отзыв')
         verbose_name_plural = _('Отзывы')
+
+    def __str__(self):
+        return f'{self.reviewer}'
 
 # TODO: Придумать как инициализировать определенные группы сотрудников
 # Либо фикстуры, либо миграции, либо apps.py - есть инициализация приложения
@@ -97,3 +113,29 @@ class Feedback(models.Model):
 #     pass
 
 # Group: Mentor Сотрудник Участник
+
+class Group(models.Model):
+    title = models.TextField(max_length=128, verbose_name='Название группы')
+    description = models.TextField(max_length=255, verbose_name='Описание группы')
+
+class MentorGroup(models.Model):
+    """
+    Модель(таблица) для связи ментор - группа(группы)
+    """
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    change_time = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = _('Группа')
+        verbose_name_plural = _('Группы')
+
+
+
+# signals
+
+@receiver(signals.post_save, sender=TrackChoice)
+def notification(sender, instance, created, **kwargs):
+    print ("email участника: ", instance.participant.email)
+    print ("трек: ", instance.track.title)
+    print ("новый статус: ", instance.status)
