@@ -7,4 +7,21 @@
 - [ Доска trello ](https://trello.com/c/0tnOXcZ7/15-%D1%81%D0%BE%D0%B7%D0%B4%D0%B0%D1%82%D1%8C-readmemd-%D0%BA%D1%83%D0%B4%D0%B0-%D0%BF%D0%BE%D0%BC%D0%B5%D1%81%D1%82%D0%B8%D1%82%D1%8C-%D1%81%D1%81%D1%8B%D0%BB%D0%BA%D0%B8)
 - [ Наброски ](https://docs.google.com/document/d/1_PtzNOEeNXOa0522gBm49XupgRXpm3Mgsg3Do2cs1A4/edit)
 
-- test
+## Деплой и первый запуск
+Переходим в каталог с проектом
+
+    bash$ cd project_folder
+    
+Билдим контейнеры
+    
+    bash$ sudo docker-compose build
+
+Поднимаем контейнеры
+
+    sudo docker-compose up -d
+
+Запускаем миграции
+
+    sudo docker exec -it <container_id> python manage.py migrate
+
+Адрес для входа в приложение: **http://127.0.0.1:8000**
