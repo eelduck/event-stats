@@ -8,11 +8,6 @@ from django.utils.translation import gettext_lazy as _
 from core.managers import UserManager
 
 
-# TODO: Сделать вызов функции при изменении статуса
-# Можно перегрузить в модели метод save - он вызывается всего при нажатии кнопки сохранить
-# Он не вызывается при групповом удалении\добавлении
-# Либо реализовать через django-signals
-
 # Переименовать
 class User(AbstractBaseUser, PermissionsMixin):
     """

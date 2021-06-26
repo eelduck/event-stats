@@ -8,7 +8,6 @@ from django.dispatch import receiver
 from django.contrib.auth.models import Group
 
 
-# TODO: Спросить про преимущества django-choices (если таковые есть)
 class ParticipantStatus(models.TextChoices):
     REGISTERED = _('Зарегистрировался')
     ON_REVIEW = _('На проверке')
