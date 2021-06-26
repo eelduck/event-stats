@@ -3,7 +3,8 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from core.models import User
-
+from django.db.models import signals
+from django.dispatch import receiver
 
 # TODO: Спросить про преимущества django-choices (если таковые есть)
 class ParticipantStatus(models.TextChoices):
@@ -128,3 +129,13 @@ class MentorGroup(models.Model):
     class Meta:
         verbose_name = _('Группа')
         verbose_name_plural = _('Группы')
+
+
+
+# signals
+
+@receiver(signals.post_save, sender=TrackChoice)
+def notification(sender, instance, created, **kwargs):
+    print ("email участника: ", instance.participant.email)
+    print ("трек: ", instance.track.title)
+    print ("новый статус: ", instance.status)
