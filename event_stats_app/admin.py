@@ -37,8 +37,8 @@ class TaskUrlForm(forms.ModelForm):
     task_url = forms.URLField(
         max_length=500,
         widget=forms.TextInput,
-        help_text="Введите ссылку на тестовое задание",
-
+        help_text='Введите ссылку на тестовое задание',
+        label='Ссылка на тестовое задание',
     )
 
 
