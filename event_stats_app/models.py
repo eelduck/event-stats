@@ -16,11 +16,6 @@ class ParticipantStatus(models.TextChoices):
     # HIRED = _('Устроился')
 
 
-# from django.contrib.auth import get_user_model
-# Использовать вместо User
-# Это дает быструю замену на твоих пользователей
-# TODO: Использовать get_user_model
-
 # TODO: Возможно стоит создать отдельно участника как прокси модель
 
 class Event(models.Model):
@@ -46,13 +41,13 @@ class Track(models.Model):
     event = models.ForeignKey('Event', on_delete=models.CASCADE, related_name='tracks', verbose_name=_('Событие'))
     # https://docs.djangoproject.com/en/dev/topics/db/models/#extra-fields-on-many-to-many-relationships
     # https://docs.djangoproject.com/en/3.2/ref/models/fields/
-    participants = models.ManyToManyField(User, related_name='tracks',
+    participants = models.ManyToManyField(get_user_model(), related_name='tracks',
                                           verbose_name=_('Участники трэка'),
                                           blank=True,
                                           through='TrackChoice',
                                           through_fields=('track', 'participant')
                                           )
-    interested = models.ManyToManyField(User, related_name='interested_tracks',
+    interested = models.ManyToManyField(get_user_model(), related_name='interested_tracks',
                                         verbose_name=_('Заинтересованные сотрудники'), blank=True)
 
     class Meta:
@@ -67,7 +62,7 @@ class TrackChoice(models.Model):
     """
     Модель(таблица) для связи статуса участника в определенном треке
     """
-    participant = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('Участник'))
+    participant = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, verbose_name=_('Участник'))
     track = models.ForeignKey(Track, on_delete=models.CASCADE, verbose_name=_('Выбранный трек'))
     change_time = models.DateTimeField(auto_now=True, verbose_name=_('Последнее время изменения'))
     status = models.CharField(
@@ -89,7 +84,7 @@ class Feedback(models.Model):
     comment = models.TextField(blank=True, verbose_name=_('Отзыв'))
     last_modified = models.DateTimeField(auto_now=True, verbose_name=_('Последние изменения'))
     score = models.IntegerField(choices=((i, i) for i in range(1, 6)), verbose_name=_('Оценка'))
-    reviewer = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_('Ревьювер'))
+    reviewer = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, verbose_name=_('Ревьювер'))
     participant_track_choice = models.ForeignKey(
         TrackChoice,
         on_delete=models.CASCADE,
