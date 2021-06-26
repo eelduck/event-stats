@@ -16,11 +16,6 @@ class ParticipantStatus(models.TextChoices):
     # HIRED = _('Устроился')
 
 
-# from django.contrib.auth import get_user_model
-# Использовать вместо User
-# Это дает быструю замену на твоих пользователей
-# TODO: Использовать get_user_model
-
 # TODO: Возможно стоит создать отдельно участника как прокси модель
 
 class Event(models.Model):
