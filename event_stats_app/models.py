@@ -5,6 +5,8 @@ from django.utils.translation import gettext_lazy as _
 from core.models import User
 from django.db.models import signals
 from django.dispatch import receiver
+from django.contrib.auth.models import Group
+
 
 # TODO: Спросить про преимущества django-choices (если таковые есть)
 class ParticipantStatus(models.TextChoices):
@@ -103,39 +105,10 @@ class Feedback(models.Model):
     def __str__(self):
         return f'{self.reviewer}'
 
-# TODO: Придумать как инициализировать определенные группы сотрудников
-# Либо фикстуры, либо миграции, либо apps.py - есть инициализация приложения
-# при apps.py можно сделать migrate при диплое, т.е добавить кастомную логику при каждой играции
-# прорверять сущестуют ли какие то группы или пользователи
-# либо сделать в utils функцию при вызове ...
-# лучший способ - писать кастомную миграцию (можно заполнять чем нужно)
-# class MentorGroup(Group):
-#     pass
-
-# Group: Mentor Сотрудник Участник
-
-class Group(models.Model):
-    title = models.TextField(max_length=128, verbose_name='Название группы')
-    description = models.TextField(max_length=255, verbose_name='Описание группы')
-
-class MentorGroup(models.Model):
-    """
-    Модель(таблица) для связи ментор - группа(группы)
-    """
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    group = models.ForeignKey(Group, on_delete=models.CASCADE)
-    change_time = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        verbose_name = _('Группа')
-        verbose_name_plural = _('Группы')
-
-
 
 # signals
-
 @receiver(signals.post_save, sender=TrackChoice)
 def notification(sender, instance, created, **kwargs):
-    print ("email участника: ", instance.participant.email)
-    print ("трек: ", instance.track.title)
-    print ("новый статус: ", instance.status)
+    print("email участника: ", instance.participant.email)
+    print("трек: ", instance.track.title)
+    print("новый статус: ", instance.status)
