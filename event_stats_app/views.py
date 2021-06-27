@@ -5,6 +5,23 @@ from django.shortcuts import get_object_or_404, render
 from .models import User
 from .models import Event
 
+
+
+# statistic
+def stat(request):
+    users = User.objects.order_by('email')
+    events = Event.objects.all()
+    template = loader.get_template('stats/stat.html')
+    context = {
+        'users': users,
+        'events': events,
+        'userscount': len(users),
+        'eventscount': len(events),
+    }
+    return HttpResponse(template.render(context, request))
+
+
+
 # users statistic
 def userstat(request):
     users = User.objects.order_by('email')
