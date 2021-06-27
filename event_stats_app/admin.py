@@ -23,7 +23,13 @@ class EventAdmin(admin.ModelAdmin, ExportCsvMixin):
 
 @admin.register(Track)
 class TrackAdmin(admin.ModelAdmin):
-    list_display = ('title', 'event', 'participants_count', 'attached_task_count', 'accepted_count')
+    list_display = (
+        'title',
+        'event',
+        'participants_count',
+        'attached_task_count',
+        'accepted_count'
+    )
     list_filter = ('title', 'event')
     search_fields = ('title',)
 
@@ -34,16 +40,14 @@ class TrackAdmin(admin.ModelAdmin):
         )
         return queryset
 
+    @admin.display(ordering='_participants_count')
     def participants_count(self, obj) -> int:
         """
         Подсчет количество участников (заявок) в треке
         """
         return obj._participants_count
 
-    # TODO: Починить сортировку
-    # Сортировка не работает, возможно проблема из-за django-bootstrap4
-    # https://stackoverflow.com/questions/45744315/django-admin-bool-object-has-no-attribute-startswith
-    # @admin.display(ordering=True)
+    # TODO: Добавить сортировку (походу придется добавить поле в queryset.annotate)
     def attached_task_count(self, obj) -> int:
         """
         Количество сданных тестовых заданий (ТЗ)
@@ -62,7 +66,6 @@ class TrackAdmin(admin.ModelAdmin):
         """
         return TrackChoice.objects.filter(track_id=obj.id, status=status)
 
-    # @admin.display(ordering=True, boolean=False)
     def accepted_count(self, obj) -> int:
         """
         Количество участников со статусом ACCEPTED
