@@ -38,32 +38,12 @@ def userdetail(request, user_id):
 
 
 # events statistic
-def eventstat(request):
-    events = Event.objects.order_by('id')
+def eventstat(request, event_id):
+    event = get_object_or_404(Event, pk=event_id)
     template = loader.get_template('stats/eventstat.html')
     context = {
-        'events_list': events,
+        'event': event,
     }
     return HttpResponse(template.render(context, request))
 
 
-# detail event
-def eventdetail(request, event_id):
-    event = get_object_or_404(User, pk=event_id)
-    return render(request, 'stat/eventdetail.html', {'event': event})
-
-
-# tracks statistic
-def eventstat(request):
-    events = Event.objects.order_by('id')
-    template = loader.get_template('stats/eventstat.html')
-    context = {
-        'events_list': events,
-    }
-    return HttpResponse(template.render(context, request))
-
-
-# detail event
-def eventdetail(request, event_id):
-    event = get_object_or_404(User, pk=event_id)
-    return render(request, 'stat/eventdetail.html', {'event': event})

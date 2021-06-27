@@ -24,10 +24,10 @@
 {% if events %}
     <ul>
     {% for event in events %}
-        <li>{{ event.title }} - {{ event.date }} ({{ event.tracks.count }})
+        <li><a href="{% url 'eventstat' event.id %}">{{ event.title }} - {{ event.date }} ({{ event.tracks.count }} tracks)</a>
             <ul>
                 {% for track in event.tracks.all %}
-                     <li>{{ track.title }} ({{ track.participants.count }})
+                     <li>{{ track.title }} ({{ track.participants.count }} users)
                 {% endfor %}
             </ul>
         </li>
