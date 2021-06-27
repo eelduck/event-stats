@@ -178,7 +178,7 @@ class ExcelImportService:
 
     # TODO: Отрефакторить функцию
     @staticmethod
-    def _add_objects(model: Model, entities_to_add: list[dict], wipe: bool = False):
+    def _add_objects(model: Model, entities_to_add: list[dict]):
         """
         Добавление экземпляров модели
         data: Данные для добавление
@@ -186,8 +186,6 @@ class ExcelImportService:
         wipe: флаг очистки всех сущностней модели
         """
         qs = model.objects.all()
-        if wipe and qs.count() != 0:
-            qs.delete()
         new_entities = []
         if qs.count() == 0:
             for entity in entities_to_add:
