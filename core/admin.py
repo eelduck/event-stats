@@ -4,7 +4,7 @@ from django.forms import forms
 from django.shortcuts import redirect, render
 from django.urls import path
 from core.models import User
-from core.utils import ExportCsvMixin
+from core.utils import ExportCsvMixin, ExcelImportService
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.admin import UserAdmin
 
@@ -57,10 +57,8 @@ class CustomUserAdmin(UserAdmin, ExportCsvMixin):
         if request.method == "POST":
             print(request.FILES)
             excel_file = request.FILES["excel_file"]
-            df = pd.read_excel(excel_file)
-            print(df)
-            # Create objects from passed in data
-            # ...
+            excel_import_service = ExcelImportService()
+            excel_import_service.import_excel(excel_file)
             self.message_user(request, "Your excel file has been imported")
             return redirect("..")
         form = ExcelImportForm()
