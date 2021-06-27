@@ -5,7 +5,7 @@
 
 {% if event %}
 
-<h>{{ event.title }}</h>
+<h>{{ event.title }} (users: {{ userscount }})</h>
         <ul>
             {% for track in event.tracks.all %}
                  <li>{{ track.title }} ({{ track.participants.count }} users)

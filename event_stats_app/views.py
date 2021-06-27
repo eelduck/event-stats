@@ -40,9 +40,11 @@ def userdetail(request, user_id):
 # events statistic
 def eventstat(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
+    userscount = User.objects.filter(tracks__event=event_id).count()
     template = loader.get_template('stats/eventstat.html')
     context = {
         'event': event,
+        'userscount': userscount,
     }
     return HttpResponse(template.render(context, request))
 
