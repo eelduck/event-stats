@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django import forms
+from django.db.models import Count, QuerySet
 from django.shortcuts import redirect, render
 from django.urls import path
 
@@ -22,9 +23,52 @@ class EventAdmin(admin.ModelAdmin, ExportCsvMixin):
 
 @admin.register(Track)
 class TrackAdmin(admin.ModelAdmin):
-    list_display = ('title', 'event')
+    list_display = ('title', 'event', 'participants_count', 'attached_task_count', 'accepted_count')
     list_filter = ('title', 'event')
     search_fields = ('title',)
+
+    def get_queryset(self, request):
+        queryset: QuerySet = super().get_queryset(request)
+        queryset: QuerySet = queryset.annotate(
+            _participants_count=Count('participants', distinct=True),
+        )
+        return queryset
+
+    def participants_count(self, obj) -> int:
+        """
+        Подсчет количество участников (заявок) в треке
+        """
+        return obj._participants_count
+
+    # TODO: Починить сортировку
+    # Сортировка не работает, возможно проблема из-за django-bootstrap4
+    # https://stackoverflow.com/questions/45744315/django-admin-bool-object-has-no-attribute-startswith
+    # @admin.display(ordering=True)
+    def attached_task_count(self, obj) -> int:
+        """
+        Количество сданных тестовых заданий (ТЗ)
+        Считается по наличию ссылки на ТЗ, через поиск по трэку
+        и эксфильтрацию пустых и Null значений
+        """
+        return TrackChoice.objects \
+            .filter(track_id=obj.id) \
+            .exclude(task_url__isnull=True) \
+            .exclude(task_url__exact='') \
+            .count()
+
+    def _filter_track_choices_by(self, obj, status) -> QuerySet:
+        """
+        Фильтрация выбора треков (участников трека) по статусу
+        """
+        return TrackChoice.objects.filter(track_id=obj.id, status=status)
+
+    # @admin.display(ordering=True, boolean=False)
+    def accepted_count(self, obj) -> int:
+        """
+        Количество участников со статусом ACCEPTED
+        """
+        accepted: QuerySet = self._filter_track_choices_by(obj, ParticipantStatus.ACCEPTED)
+        return accepted.count()
 
 
 # TODO: Узнать как делать фильтрацию (отображать только треки, выбранные пользователем)
