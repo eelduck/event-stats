@@ -9,6 +9,7 @@ pandas = "*"
 xlrd = "*"
 openpyxl = "*"
 jupyter = "*"
+django-bootstrap4 = "==3.0.1"
 
 [dev-packages]
 

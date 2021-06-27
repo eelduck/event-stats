@@ -1,40 +1,45 @@
-{% load bootstrap4 %}
-{% bootstrap_css %}
-{% bootstrap_javascript jquery='full' %}
+{% extends 'base.html' %}
 
-{% if userscount %}
-    <p>Количество участников: {{ userscount }}</p>
-{% endif %}
+{% block content %}
+    <h1>Статистика за все время</h1>
+    {% if users_count %}
+        <p>Общее количество участников: {{ users_count }}</p>
+    {% endif %}
 
-{% if userscount %}
-    <p>Количество мероприятий: {{ eventscount }}</p>
-{% endif %}
+    {% if users_count %}
+        <p>Общее количество событий: {{ events_count }}</p>
+    {% endif %}
 
+    <h2>События:</h2>
+    {% if events %}
+        <ul>
 
+            {% for event in events %}
+                <li><a href="{% url 'eventstat' event.id %}">{{ event.title }} - {{ event.date }}</a>
+                    <ul>
+                        <li>Всего участников в событии: </li>
+                        <li>Регистраций на треки: {{ event.registered_count }}</li>
 
-{% if users %}
-    <ul>
-    {% for user in users %}
-        <li>{{ user.email }}</li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No users are available.</p>
-{% endif %}
+                        <li>Сдали ТЗ: {{ 0 }}</li>
+                        <li>Прошли: {{ event.accepted_count }}</li>
+                    </ul>
+                    <h3>Треки: (Всего {{ event.tracks.count }})</h3>
+                    <ul>
+                        {% for track in event.tracks.all %}
+                            <li>{{ track.title }} ({{ track.participants.count }} users)
+                            <ul>
 
+                                <li>Зарегистрировалось: {{ event.registered_counts  }}</li>
+                                <li>Сдали ТЗ: {{ 123  }}</li>
+                                <li>Прошли: {{ event.accepted_counts }}</li>
+                            </ul>
+                        {% endfor %}
+                    </ul>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Нет событий</p>
+    {% endif %}
 
-{% if events %}
-    <ul>
-    {% for event in events %}
-        <li><a href="{% url 'eventstat' event.id %}">{{ event.title }} - {{ event.date }} ({{ event.tracks.count }} tracks)</a>
-            <ul>
-                {% for track in event.tracks.all %}
-                     <li>{{ track.title }} ({{ track.participants.count }} users)
-                {% endfor %}
-            </ul>
-        </li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No users are available.</p>
-{% endif %}
+{% endblock %}
