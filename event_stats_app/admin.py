@@ -157,7 +157,7 @@ class TrackChoiceAdmin(admin.ModelAdmin):
     def get_urls(self):
         urls = super().get_urls()
         my_urls = [
-            path('add-link-to-task/', self.add_link_to_task),
+            path('add-link-to-task/', self.add_link_to_task, name='task_link'),
         ]
         return my_urls + urls
 

@@ -84,7 +84,7 @@ def import_excel(request):
         excel_import_service = ExcelImportService()
         excel_import_service.import_excel(excel_file)
         messages.add_message(request, messages.INFO, 'Your excel file has been imported')
-        return redirect("/admin")
+        return redirect("..")
     form = ExcelImportForm()
     payload = {"form": form}
     return render(
