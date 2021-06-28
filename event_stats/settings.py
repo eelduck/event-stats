@@ -133,3 +133,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # AUTH_USER_MODEL = 'путь.к.модели'
 # 'events_stat_app.models.MyUserModel'
 AUTH_USER_MODEL = 'core.User'
+
+# Перед отправкой сообщений необходимо настроить следующий константы.
+# А также надо разрешить доступ небезопасным приложениям в gmail
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'Your email here'
+EMAIL_HOST_PASSWORD = 'Your password here'

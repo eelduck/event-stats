@@ -39,6 +39,12 @@ class ExcelImportForm(forms.Form):
     excel_file = forms.FileField()
 
 
+@admin.action(description='Подписаться')
+def subscribe_to_participant(modeladmin, request, queryset):
+    for participant in queryset:
+        participant.interested.add(User.objects.get(email=request.user.email))
+
+
 @admin.register(User)
 class CustomUserAdmin(UserAdmin, ExportCsvMixin):
     add_form_template = 'admin/auth/user/add_form.html'
@@ -62,8 +68,8 @@ class CustomUserAdmin(UserAdmin, ExportCsvMixin):
     list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups', 'city')
     search_fields = ('first_name', 'last_name', 'email')
     ordering = ('email',)
-    filter_horizontal = ('groups', 'user_permissions',)
-    actions = ['export_as_csv']
+    filter_horizontal = ('groups', 'user_permissions', 'interested',)
+    actions = ['subscribe_to_participant', 'export_as_csv']
 
     def get_urls(self):
         return [
@@ -75,5 +81,8 @@ class CustomUserAdmin(UserAdmin, ExportCsvMixin):
                    # path('export_as_csv/', self._export_as_csv)
                ] + super().get_urls()
 
-    # def _export_as_csv(self, request):
-    #     queryset = None
+    @admin.action(description='Подписаться')
+    def subscribe_to_participant(self, request, queryset):
+        for participant in queryset:
+            participant.interested.add(
+                User.objects.get(email=request.user.email))

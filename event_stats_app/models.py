@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.mail import send_mail
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -105,6 +106,9 @@ class Feedback(models.Model):
 # signals
 @receiver(signals.post_save, sender=TrackChoice)
 def notification(sender, instance, created, **kwargs):
-    print("email участника: ", instance.participant.email)
-    print("трек: ", instance.track.title)
-    print("новый статус: ", instance.status)
+    interested_users = User.objects.get(email=instance.participant).interested.all()
+    send_mail('Subject here', instance.participant.email, 'from@example.com',
+             interested_users, fail_silently=False)
+    print("Email участника: ", instance.participant.email)
+    print("Трек: ", instance.track.title)
+    print("Новый статус: ", instance.status)
