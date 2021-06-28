@@ -1,8 +1,5 @@
 import csv
 from pprint import pprint
-
-from typing import List
-
 import pandas as pd
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db.models import Model
@@ -141,6 +138,7 @@ class ExcelImportService:
             return Event.objects.get(
                 title=row[self.event_title_header],
                 date=row[self.event_date_header]).id
+
         track_df = self._create_model_df(self.track_attributes)
         track_df[self.track_event_attribute] = track_df.apply(lambda row: get_event_id(row), axis=1)
 

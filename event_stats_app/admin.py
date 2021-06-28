@@ -131,6 +131,7 @@ class TrackAdmin(admin.ModelAdmin):
 
 
 # TODO: Узнать как делать фильтрацию (отображать только треки, выбранные пользователем)
+# Сделать кастомный виджет на поле в котором динамически фильтровать через JS
 class TaskUrlForm(forms.ModelForm):
     class Meta:
         model = TrackChoice
