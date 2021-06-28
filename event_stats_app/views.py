@@ -1,7 +1,11 @@
-from django.shortcuts import render
+from django.contrib import messages
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.template import loader
 from django.shortcuts import get_object_or_404, render
+
+from core.admin import ExcelImportForm
+from core.utils import ExcelImportService
 from .models import User, TrackChoice, ParticipantStatus
 from .models import Event
 
@@ -71,3 +75,18 @@ def event_stat(request, event_id):
         'users_count': users_count,
     }
     return render(request, 'stats/event_stat.html', context)
+
+
+def import_excel(request):
+    if request.method == "POST":
+        print(request.FILES)
+        excel_file = request.FILES["excel_file"]
+        excel_import_service = ExcelImportService()
+        excel_import_service.import_excel(excel_file)
+        messages.add_message(request, messages.INFO, 'Your excel file has been imported')
+        return redirect("/admin")
+    form = ExcelImportForm()
+    payload = {"form": form}
+    return render(
+        request, "core/excel_form.html", payload
+    )

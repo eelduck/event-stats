@@ -47,22 +47,7 @@ class CustomUserAdmin(UserAdmin, ExportCsvMixin):
                        name='auth_user_password_change',
                    ),
                    # path('export_as_csv/', self._export_as_csv)
-                   path('import-excel/', self.import_excel)
                ] + super().get_urls()
 
     # def _export_as_csv(self, request):
     #     queryset = None
-
-    def import_excel(self, request):
-        if request.method == "POST":
-            print(request.FILES)
-            excel_file = request.FILES["excel_file"]
-            excel_import_service = ExcelImportService()
-            excel_import_service.import_excel(excel_file)
-            self.message_user(request, "Your excel file has been imported")
-            return redirect("..")
-        form = ExcelImportForm()
-        payload = {"form": form}
-        return render(
-            request, "core/excel_form.html", payload
-        )
