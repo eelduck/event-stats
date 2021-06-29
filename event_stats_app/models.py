@@ -65,7 +65,7 @@ class TrackChoice(models.Model):
     participant = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, verbose_name=_('Участник'))
     track = models.ForeignKey(Track, on_delete=models.CASCADE, verbose_name=_('Выбранный трек'))
     change_time = models.DateTimeField(auto_now=True, verbose_name=_('Последнее время изменения'))
-    task_url = models.URLField(verbose_name=_('Ссылка на тестовое задание'), blank=True)
+    task_url = models.CharField(max_length=255, verbose_name=_('Ссылка на тестовое задание'), blank=True)
     status = models.CharField(
         max_length=32,
         choices=ParticipantStatus.choices,

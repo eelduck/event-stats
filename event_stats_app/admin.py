@@ -138,13 +138,6 @@ class TaskUrlForm(forms.ModelForm):
         # fields = ['participant', 'track', 'task_url']
         exclude = ['change_time', 'status']
 
-    task_url = forms.URLField(
-        max_length=500,
-        widget=forms.TextInput,
-        help_text='Введите ссылку на тестовое задание',
-        label='Ссылка на тестовое задание',
-    )
-
 
 # TODO: Добавить кастомную фильтрацию по дате
 @admin.register(TrackChoice)
@@ -175,7 +168,7 @@ class TrackChoiceAdmin(admin.ModelAdmin):
             track = form.cleaned_data.get('track')
             participant = form.cleaned_data.get('participant')
             track_choice = TrackChoice.objects.get(participant_id=participant.id, track_id=track.id)
-            track_choice.task_url = form.data.get('task_url')
+            track_choice.task_url = form.cleaned_data.get('task_url')
             track_choice.status = ParticipantStatus.ON_REVIEW
             track_choice.save()
             return redirect('..')
