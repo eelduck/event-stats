@@ -5,6 +5,7 @@ from django.shortcuts import redirect, render
 from django.urls import path
 
 from core.utils import ExportCsvMixin
+from event_stats_app.forms import TaskUrlForm
 from event_stats_app.models import Event, Track, TrackChoice, Feedback, ParticipantStatus
 from django.utils.translation import gettext_lazy as _
 
@@ -128,15 +129,6 @@ class TrackAdmin(admin.ModelAdmin):
             .exclude(task_url__isnull=True) \
             .exclude(task_url__exact='') \
             .count()
-
-
-# TODO: Узнать как делать фильтрацию (отображать только треки, выбранные пользователем)
-# Сделать кастомный виджет на поле в котором динамически фильтровать через JS
-class TaskUrlForm(forms.ModelForm):
-    class Meta:
-        model = TrackChoice
-        # fields = ['participant', 'track', 'task_url']
-        exclude = ['change_time', 'status']
 
 
 # TODO: Добавить кастомную фильтрацию по дате
