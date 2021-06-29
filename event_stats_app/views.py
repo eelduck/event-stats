@@ -3,11 +3,16 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.template import loader
 from django.shortcuts import get_object_or_404, render
+from formtools.wizard.views import SessionWizardView
 
 from core.admin import ExcelImportForm
 from core.utils import ExcelImportService
+from .forms import TaskUrlForm1, TaskUrlForm2
 from .models import User, TrackChoice, ParticipantStatus
 from .models import Event
+from django.template import Context
+
+from django.utils.translation import gettext_lazy as _
 
 
 # statistic
@@ -90,3 +95,22 @@ def import_excel(request):
     return render(
         request, "core/excel_form.html", payload
     )
+
+
+class AttachUrlWizard(SessionWizardView):
+    template_name = 'event_stats_app/task_url_form.html'
+    form_list = [TaskUrlForm1, TaskUrlForm2]
+
+    def done(self, form_list, **kwargs):
+        c = Context({
+            'form_list': [x.cleaned_data for x in form_list],
+            'form_dict': kwargs.get('form_dict'),
+            'all_cleaned_data': self.get_all_cleaned_data()
+        })
+        for form in self.form_list.keys():
+            c[form] = self.get_cleaned_data_for_step(form)
+
+        print(c)
+
+        messages.add_message(self.request, messages.INFO, _('Ссылка на ТЗ успешно прикреплена'))
+        return redirect("..")

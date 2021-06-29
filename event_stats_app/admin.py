@@ -11,6 +11,8 @@ from django.utils.translation import gettext_lazy as _
 
 
 # TODO: Спросить: Стоит ли создавать отдельный раздел под участников через прокси модель?
+from event_stats_app.views import AttachUrlWizard
+
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin, ExportCsvMixin):
@@ -143,7 +145,8 @@ class TrackChoiceAdmin(admin.ModelAdmin):
     def get_urls(self):
         urls = super().get_urls()
         my_urls = [
-            path('add-link-to-task/', self.add_link_to_task, name='task_link'),
+            # path('add-link-to-task/', self.add_link_to_task, name='task_link'),
+            path('add-link-to-task/', AttachUrlWizard.as_view(), name='task_link'),
         ]
         return my_urls + urls
 
