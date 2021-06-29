@@ -1,6 +1,5 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 from django import forms
-from django.contrib import messages
 from django.db.models import Count, QuerySet
 from django.shortcuts import redirect, render
 from django.urls import path
