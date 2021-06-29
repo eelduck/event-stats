@@ -39,12 +39,6 @@ class ExcelImportForm(forms.Form):
     excel_file = forms.FileField()
 
 
-@admin.action(description='Подписаться')
-def subscribe_to_participant(modeladmin, request, queryset):
-    for participant in queryset:
-        participant.interested.add(User.objects.get(email=request.user.email))
-
-
 @admin.register(User)
 class CustomUserAdmin(UserAdmin, ExportCsvMixin):
     add_form_template = 'admin/auth/user/add_form.html'
