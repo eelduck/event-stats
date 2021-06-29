@@ -10,6 +10,7 @@ xlrd = "*"
 openpyxl = "*"
 jupyter = "*"
 django-bootstrap4 = "*"
+django-simpleui = "*"
 
 [dev-packages]
 

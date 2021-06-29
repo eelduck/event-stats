@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'simpleui',
     'event_stats.apps.CustomAdminConfig',
     # 'django.contrib.admin',
     'django.contrib.auth',
