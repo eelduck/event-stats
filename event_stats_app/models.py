@@ -116,18 +116,19 @@ class Feedback(models.Model):
         return f'{self.reviewer}'
 
 
-# signals
 @receiver(signals.pre_save, sender=TrackChoice)
 def notification(sender, instance, **kwargs):
     if instance.id:
         old_instance = TrackChoice.objects.get(id=instance.id)
         if old_instance.status != instance.status:
             participant_interested_users = set(User.objects.get(
-                email=instance.participant).interested.all())
+                email=instance.participant
+            ).interested.values_list('email', flat=True))
             track_interested_users = set(Track.objects.get(
-                id=instance.track.id).interested.all())
+                id=instance.track.id
+            ).interested.values_list('email', flat=True))
             interested_users = participant_interested_users.union(track_interested_users)
-
+            print(interested_users)
             notification_message = f'У участника {instance.participant.email} ' \
                                    f'(трек {instance.track.title}) изменился статус.\n' \
                                    f'Обновленный статус - {instance.status} '
