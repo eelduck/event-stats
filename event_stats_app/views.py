@@ -10,10 +10,6 @@ from .models import User, TrackChoice, ParticipantStatus
 from .models import Event
 
 
-def index(request):
-    return redirect('/admin')
-
-
 # statistic
 def stat(request):
     users: set = {tc.participant for tc in TrackChoice.objects.all()}
