@@ -1,5 +1,5 @@
 import pandas as pd
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.contrib.auth.models import Group
 from django.forms import forms
 from django.shortcuts import redirect, render
@@ -75,8 +75,10 @@ class CustomUserAdmin(UserAdmin, ExportCsvMixin):
                    # path('export_as_csv/', self._export_as_csv)
                ] + super().get_urls()
 
-    @admin.action(description='Подписаться')
+    @admin.action(description='Подписаться выбранных участников')
     def subscribe_to_participant(self, request, queryset):
         for participant in queryset:
             participant.interested.add(
                 User.objects.get(email=request.user.email))
+        messages.add_message(request, messages.INFO,
+                             f'Подписка на участников прошла успешно')

@@ -1,9 +1,11 @@
 from django.contrib import admin
 from django import forms
+from django.contrib import messages
 from django.db.models import Count, QuerySet
 from django.shortcuts import redirect, render
 from django.urls import path
 
+from core.models import User
 from core.utils import ExportCsvMixin
 from event_stats_app.models import Event, Track, TrackChoice, Feedback, ParticipantStatus
 from django.utils.translation import gettext_lazy as _
@@ -87,6 +89,9 @@ class TrackAdmin(admin.ModelAdmin):
     )
     list_filter = ('title', 'event')
     search_fields = ('title',)
+    filter_horizontal = ('interested',)
+
+    actions = ['subscribe_to_track']
 
     def get_queryset(self, request):
         queryset: QuerySet = super().get_queryset(request)
@@ -128,6 +133,14 @@ class TrackAdmin(admin.ModelAdmin):
             .exclude(task_url__isnull=True) \
             .exclude(task_url__exact='') \
             .count()
+
+    @admin.action(description='Подписаться на выбранные треки')
+    def subscribe_to_track(self, request, queryset):
+        for track in queryset:
+            track.interested.add(
+                User.objects.get(email=request.user.email))
+        messages.add_message(request, messages.INFO,
+                             f'Подписка на треки прошла успешно')
 
 
 # TODO: Узнать как делать фильтрацию (отображать только треки, выбранные пользователем)
