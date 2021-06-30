@@ -50,5 +50,5 @@ class CustomUserAdmin(UserAdmin, ExportCsvMixin):
         for participant in queryset:
             participant.interested.add(
                 CustomUser.objects.get(email=request.user.email))
-        messages.add_message(request, messages.INFO,
+        messages.add_message(request, messages.SUCCESS,
                              f'Подписка на участников прошла успешно')

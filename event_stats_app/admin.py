@@ -134,12 +134,12 @@ class TrackAdmin(admin.ModelAdmin):
             .exclude(task_url__exact='') \
             .count()
 
-    @admin.action(description='Подписаться на выбранные треки')
+    @admin.action(description='Подписаться')
     def subscribe_to_track(self, request, queryset):
         for track in queryset:
             track.interested.add(
                 CustomUser.objects.get(email=request.user.email))
-        messages.add_message(request, messages.INFO,
+        messages.add_message(request, messages.SUCCESS,
                              f'Подписка на треки прошла успешно')
 
 
@@ -183,3 +183,4 @@ class FeedbackAdmin(admin.ModelAdmin):
         'reviewer__email',
     )
     search_fields = ('score', 'reviewer__email')
+    raw_id_fields = ('participant_track_choice',)
