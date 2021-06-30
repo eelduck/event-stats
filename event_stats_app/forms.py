@@ -24,9 +24,3 @@ class TaskUrlForm2(forms.ModelForm):
         model = TrackChoice
         # fields = ['participant', 'track', 'task_url']
         exclude = ['change_time', 'status', 'participant']
-
-    def __init__(self, *args, **kwargs):
-        # TODO: Нужно как-то получить выбор с предыдущего шага
-        super().__init__(*args, **kwargs)
-        # TODO: Нужно отфильтровать по participant,
-        # self.fields['track'].queryset = TrackChoice.objects.filter(participant=)

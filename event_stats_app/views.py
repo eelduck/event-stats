@@ -97,9 +97,48 @@ def import_excel(request):
     )
 
 
+class CustomSessionWizardView(SessionWizardView):
+    """
+    Переопределение функции, а точнее одного поля для передачи дополнительных значений в генерируемые формы
+    """
+
+    def render_next_step(self, form, **kwargs):
+        """
+        This method gets called when the next step/form should be rendered.
+        `form` contains the last/current form.
+        prev_step_data -
+        """
+        # get the form instance based on the data from the storage backend
+        # (if available).
+        next_step = self.steps.next
+        new_form = self.get_form(
+            next_step,
+            data=self.storage.get_step_data(next_step),
+            files=self.storage.get_step_files(next_step),
+        )
+        new_form.prev_step_data = kwargs.get('prev_step_data')
+        # change the stored current step
+        self.storage.current_step = next_step
+        return self.render(new_form, **kwargs)
+
+
 class AttachUrlWizard(SessionWizardView):
     template_name = 'event_stats_app/task_url_form.html'
     form_list = [TaskUrlForm1, TaskUrlForm2]
+
+    def get_form(self, step=None, data=None, files=None):
+        form = super().get_form(step, data, files)
+
+        if step is None:
+            step = self.steps.current
+
+        if step == '1':
+            step0_form = self.form_list.get(str(0))
+            print(step0_form)
+            # print(f'{kek=}')
+            form.fields['track'].queryset = TrackChoice.objects.all()
+        return form
+
 
     def done(self, form_list, **kwargs):
         c = Context({
