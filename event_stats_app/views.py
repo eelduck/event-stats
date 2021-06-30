@@ -139,7 +139,6 @@ class AttachUrlWizard(SessionWizardView):
             form.fields['track'].queryset = TrackChoice.objects.all()
         return form
 
-
     def done(self, form_list, **kwargs):
         c = Context({
             'form_list': [x.cleaned_data for x in form_list],
