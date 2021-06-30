@@ -1,21 +1,17 @@
 from django.contrib import admin, messages
-
 from django.db.models import Count, QuerySet
-from django.shortcuts import reverse
 from django.urls import path
+from django.utils.translation import gettext_lazy as _
 
 from core.models import CustomUser
 from core.utils import ExportCsvMixin
 from event_stats_app.models import Event, Track, TrackChoice, Feedback, ParticipantStatus
-from django.utils.translation import gettext_lazy as _
-
 # TODO: Спросить: Стоит ли создавать отдельный раздел под участников через прокси модель?
 from event_stats_app.views import AttachUrlWizard
 
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin, ExportCsvMixin):
-    # TODO: Добавить иную фильтрацию по дате
     list_display = (
         'title',
         'date',

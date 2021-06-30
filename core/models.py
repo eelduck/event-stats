@@ -21,7 +21,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     phone_number = models.CharField(_('phone number'), max_length=32, blank=True)
     city = models.CharField(_('city'), max_length=64, blank=True)
 
-    # TODO: Стоит ли вынести с Participant Model?
     interested = models.ManyToManyField('CustomUser', related_name='interested_participants',
                                         verbose_name=_('Заинтересованные сотрудники'), blank=True)
 
@@ -49,10 +48,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     class Meta:
         verbose_name = _('user')
         verbose_name_plural = _('users')
-
-    # def clean(self):
-    #     super().clean()
-    #     self.email = self.__class__.objects.normalize_email(self.email)
 
     def get_full_name(self):
         """

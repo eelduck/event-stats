@@ -1,12 +1,12 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.core.mail import send_mail
 from django.db import models
+from django.db.models import signals
+from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 
 from core.models import CustomUser
-from django.db.models import signals
-from django.dispatch import receiver
-from django.contrib.auth.models import Group
 
 
 class ParticipantStatus(models.TextChoices):
@@ -14,7 +14,7 @@ class ParticipantStatus(models.TextChoices):
     ON_REVIEW = _('На проверке')
     ACCEPTED = _('Принят')
     DENIED = _('Не принят')
-    # HIRED = _('Устроился')
+
 
 
 # TODO: Возможно стоит создать отдельно участника как прокси модель

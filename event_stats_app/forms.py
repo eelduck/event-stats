@@ -1,7 +1,7 @@
 from django import forms
+from django.utils.translation import gettext_lazy as _
 
 from event_stats_app.models import TrackChoice
-from django.utils.translation import gettext_lazy as _
 
 
 # TODO: Узнать как делать фильтрацию (отображать только треки, выбранные пользователем)

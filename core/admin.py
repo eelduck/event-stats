@@ -1,10 +1,11 @@
 from django.contrib import admin, messages
+from django.contrib.auth.admin import UserAdmin
 from django.forms import forms
 from django.urls import path
+from django.utils.translation import gettext_lazy as _
+
 from core.models import CustomUser
 from core.utils import ExportCsvMixin
-from django.utils.translation import gettext_lazy as _
-from django.contrib.auth.admin import UserAdmin
 
 
 class ExcelImportForm(forms.Form):
