@@ -25,7 +25,7 @@ class ExportCsvMixin:
 
         return response
 
-    export_as_csv.short_description = _("Export Selected")
+    export_as_csv.short_description = _("Экспортировать выбранные")
 
 
 class ImportCsvMixin:
