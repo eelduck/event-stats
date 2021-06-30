@@ -49,7 +49,9 @@
                                class="upgrade"><span class="el-icon-top"></span><span
                                     v-text="upgrade.version"></span></a>
                         </div>
-                        <el-button  @click="openUrl({% url 'import_excel' %})">Импортировать данные
+                        <el-button  @click="openUrl({% url 'import_excel' %})">Импортировать данные участников
+                        </el-button>
+                        <el-button  @click="openUrl({% url 'task_link' %})">Прикрепить ссылку на ТЗ
                         </el-button>
                     </div>
                 </el-card>

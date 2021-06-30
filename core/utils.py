@@ -3,7 +3,7 @@ from pprint import pprint
 import pandas as pd
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db.models import Model
-
+from django.contrib import admin, messages
 from django.http import HttpResponse
 from django.utils.translation import gettext_lazy as _
 
@@ -11,6 +11,7 @@ from event_stats_app.models import CustomUser, Event, Track, TrackChoice, Partic
 
 
 class ExportCsvMixin:
+    @admin.action(description='Экспортировать в CSV')
     def export_as_csv(self, request, queryset):
         meta = self.model._meta
         field_names = [field.name for field in meta.fields]
@@ -23,9 +24,11 @@ class ExportCsvMixin:
         for obj in queryset:
             row = writer.writerow([getattr(obj, field) for field in field_names])
 
+        messages.add_message(request, messages.SUCCESS,
+                             f'Экспорт произведен успешно')
         return response
 
-    export_as_csv.short_description = _("Экспортировать выбранные")
+    # export_as_csv.short_description = _("Экспортировать в CSV")
 
 
 class ImportCsvMixin:

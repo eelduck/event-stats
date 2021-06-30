@@ -17,8 +17,11 @@ from django.contrib import admin
 from django.urls import path, include
 
 from event_stats_app import views
+from event_stats_app.views import AttachUrlWizard
 
 urlpatterns = [
+    # https://github.com/newpanjing/simpleui/issues/276
+    path('add-link-to-task/', AttachUrlWizard.as_view(), name='task_link'),
     path('import-excel/', views.import_excel, name="import_excel"),
     path('', admin.site.urls),
 ]

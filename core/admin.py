@@ -45,7 +45,7 @@ class CustomUserAdmin(UserAdmin, ExportCsvMixin):
                    ),
                ] + super().get_urls()
 
-    @admin.action(description='Подписаться выбранных участников')
+    @admin.action(description='Подписаться')
     def subscribe_to_participant(self, request, queryset):
         for participant in queryset:
             participant.interested.add(
