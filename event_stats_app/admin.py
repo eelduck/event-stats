@@ -2,7 +2,7 @@ from django.contrib import admin, messages
 from django import forms
 from django.db.models import Count, QuerySet
 from django.shortcuts import redirect, render
-from django.urls import path
+from django.urls import path, reverse
 
 from core.models import User
 from core.utils import ExportCsvMixin
@@ -161,23 +161,18 @@ class TaskUrlForm(forms.ModelForm):
 # TODO: Добавить кастомную фильтрацию по дате
 @admin.register(TrackChoice)
 class TrackChoiceAdmin(admin.ModelAdmin):
-    change_list_template = 'event_stats_app/track_choice_changelist.html'
-
     list_display = ('participant', 'track', 'status')
     list_filter = ('status', 'track__title', 'track__event', 'track__event__date')
     search_fields = ('participant__email', 'track__title')
 
-    def get_urls(self):
-        urls = super().get_urls()
-        my_urls = [
-            path('add-link-to-task/', self.add_link_to_task, name='task_link'),
-        ]
-        return my_urls + urls
+    actions = ['add_link_to_task', 'export_as_csv']
 
+    @admin.action(description='Прикрепить ссылку на ТЗ')
     def add_link_to_task(self, request):
         """
         Добавление ссылки на тестовое и изменение статуса на ON_REVIEW
         """
+        print('HELOOOO')
         if request.method == 'POST':
             # TODO: Узнать как лучше обрабатывать форму
             form = TaskUrlForm(request.POST)
@@ -194,6 +189,17 @@ class TrackChoiceAdmin(admin.ModelAdmin):
         form = TaskUrlForm()
         payload = {'form': form}
         return render(request, 'event_stats_app/task_url_form.html', payload)
+
+    def get_urls(self):
+        urls = super().get_urls()
+        my_urls = [
+            path('add-link-to-task/', self.add_link_to_task, name='task_link'),
+        ]
+        return my_urls + urls
+
+    add_link_to_task.action_type = 1
+    add_link_to_task.action_url = 'event_stats_app/trackchoice/add-link-to-task'
+    add_link_to_task.confirm = False
 
 
 @admin.register(Feedback)

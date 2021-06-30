@@ -42,7 +42,6 @@ class ExcelImportForm(forms.Form):
 @admin.register(User)
 class CustomUserAdmin(UserAdmin, ExportCsvMixin):
     add_form_template = 'admin/auth/user/add_form.html'
-    change_list_template = 'core/user_changelist.html'
     fieldsets = (
         (None, {'fields': ('password',)}),
         (_('Personal info'), {'fields': ('first_name', 'last_name', 'email', 'phone_number', 'city')}),
@@ -59,7 +58,7 @@ class CustomUserAdmin(UserAdmin, ExportCsvMixin):
         }),
     )
     list_display = ('email', 'first_name', 'last_name', 'city', 'is_staff')
-    list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups', 'city')
+    list_filter = ('is_staff', 'is_superuser', 'groups', 'city')
     search_fields = ('first_name', 'last_name', 'email')
     ordering = ('email',)
     filter_horizontal = ('groups', 'user_permissions', 'interested',)

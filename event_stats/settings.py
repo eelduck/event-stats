@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'simpleui',
     'event_stats.apps.CustomAdminConfig',
     # 'django.contrib.admin',
     'django.contrib.auth',
@@ -142,3 +143,5 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'Your email here'
 EMAIL_HOST_PASSWORD = 'Your password here'
+
+SIMPLEUI_HOME_ACTION = False
