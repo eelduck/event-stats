@@ -1,13 +1,15 @@
 from django.contrib import messages
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from django.template import loader
+from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404, render
+from formtools.wizard.views import SessionWizardView
 
 from core.admin import ExcelImportForm
 from core.utils import ExcelImportService
-from .models import User, TrackChoice, ParticipantStatus
+from .forms import TaskUrlForm1, TaskUrlForm2
+from .models import CustomUser, TrackChoice, ParticipantStatus
 from .models import Event
+
+from django.utils.translation import gettext_lazy as _
 
 
 # statistic
@@ -52,7 +54,7 @@ def stat(request):
 
 # users statistic
 def user_stat(request):
-    users = User.objects.order_by('email')
+    users = CustomUser.objects.order_by('email')
     context = {
         'users_list': users,
     }
@@ -61,14 +63,14 @@ def user_stat(request):
 
 # detail user statistic
 def user_detail(request, user_id):
-    user = get_object_or_404(User, pk=user_id)
+    user = get_object_or_404(CustomUser, pk=user_id)
     return render(request, 'stat/user_detail.html', {'user': user})
 
 
 # events statistic
 def event_stat(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
-    users_count = User.objects.filter(tracks__event=event_id).count()
+    users_count = CustomUser.objects.filter(tracks__event=event_id).count()
 
     context = {
         'event': event,
@@ -90,3 +92,32 @@ def import_excel(request):
     return render(
         request, "core/excel_form.html", payload
     )
+
+
+class AttachUrlWizard(SessionWizardView):
+    template_name = 'event_stats_app/task_url_form.html'
+    form_list = [TaskUrlForm1, TaskUrlForm2]
+
+    def get_form(self, step=None, data=None, files=None):
+        # data: This QueryDict instance is immutable
+        form = super().get_form(step, data, files)
+        if step is None:
+            step = self.steps.current
+
+        if step == '1':
+            participant_id = int(self.storage.data.get('step_data').get('0').get('0-participant')[0])
+            form.fields['track_choice'].queryset = TrackChoice.objects.filter(participant_id=participant_id)
+            return form
+        return form
+
+    def done(self, form_list, **kwargs):
+        info_step = str(1)
+        data = self.get_cleaned_data_for_step(info_step)
+
+        tc = data.get('track_choice')
+        task_url = data.get('task_url')
+        tc.task_url = task_url
+        tc.save()
+
+        messages.add_message(self.request, messages.INFO, _('Ссылка на ТЗ успешно прикреплена'))
+        return redirect("..")

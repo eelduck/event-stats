@@ -3,7 +3,7 @@ from django.core.mail import send_mail
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from core.models import User
+from core.models import CustomUser
 from django.db.models import signals
 from django.dispatch import receiver
 from django.contrib.auth.models import Group
@@ -49,7 +49,7 @@ class Track(models.Model):
                                           blank=True,
                                           through='TrackChoice',
                                           through_fields=(
-                                          'track', 'participant')
+                                              'track', 'participant')
                                           )
     interested = models.ManyToManyField(get_user_model(),
                                         related_name='interested_tracks',
@@ -69,14 +69,10 @@ class TrackChoice(models.Model):
     """
     Модель(таблица) для связи статуса участника в определенном треке
     """
-    participant = models.ForeignKey(get_user_model(), on_delete=models.CASCADE,
-                                    verbose_name=_('Участник'))
-    track = models.ForeignKey(Track, on_delete=models.CASCADE,
-                              verbose_name=_('Выбранный трек'))
-    change_time = models.DateTimeField(auto_now=True, verbose_name=_(
-        'Последнее время изменения'))
-    task_url = models.URLField(verbose_name=_('Ссылка на тестовое задание'),
-                               blank=True)
+    participant = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, verbose_name=_('Участник'))
+    track = models.ForeignKey(Track, on_delete=models.CASCADE, verbose_name=_('Выбранный трек'))
+    change_time = models.DateTimeField(auto_now=True, verbose_name=_('Последнее время изменения'))
+    task_url = models.CharField(max_length=255, verbose_name=_('Ссылка на тестовое задание'), blank=True)
     status = models.CharField(
         max_length=32,
         choices=ParticipantStatus.choices,
@@ -94,12 +90,9 @@ class TrackChoice(models.Model):
 
 class Feedback(models.Model):
     comment = models.TextField(blank=True, verbose_name=_('Отзыв'))
-    last_modified = models.DateTimeField(auto_now=True,
-                                         verbose_name=_('Последние изменения'))
-    score = models.IntegerField(choices=((i, i) for i in range(1, 6)),
-                                verbose_name=_('Оценка'))
-    reviewer = models.ForeignKey(get_user_model(), on_delete=models.CASCADE,
-                                 verbose_name=_('Ревьювер'))
+    last_modified = models.DateTimeField(auto_now=True, verbose_name=_('Последние изменения'))
+    score = models.IntegerField(choices=((i, i) for i in range(1, 6)), verbose_name=_('Оценка'))
+    reviewer = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, verbose_name=_('Ревьювер'))
     participant_track_choice = models.ForeignKey(
         TrackChoice,
         on_delete=models.CASCADE,
@@ -121,7 +114,7 @@ def notification(sender, instance, **kwargs):
     if instance.id:
         old_instance = TrackChoice.objects.get(id=instance.id)
         if old_instance.status != instance.status:
-            participant_interested_users = set(User.objects.get(
+            participant_interested_users = set(CustomUser.objects.get(
                 email=instance.participant
             ).interested.values_list('email', flat=True))
             track_interested_users = set(Track.objects.get(

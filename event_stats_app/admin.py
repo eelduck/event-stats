@@ -2,15 +2,18 @@ from django.contrib import admin, messages
 from django import forms
 from django.db.models import Count, QuerySet
 from django.shortcuts import redirect, render
-from django.urls import path, reverse
+from django.urls import path
 
-from core.models import User
+from core.models import CustomUser
 from core.utils import ExportCsvMixin
+from event_stats_app.forms import TaskUrlForm
 from event_stats_app.models import Event, Track, TrackChoice, Feedback, ParticipantStatus
 from django.utils.translation import gettext_lazy as _
 
 
 # TODO: Спросить: Стоит ли создавать отдельный раздел под участников через прокси модель?
+from event_stats_app.views import AttachUrlWizard
+
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin, ExportCsvMixin):
@@ -137,42 +140,37 @@ class TrackAdmin(admin.ModelAdmin):
     def subscribe_to_track(self, request, queryset):
         for track in queryset:
             track.interested.add(
-                User.objects.get(email=request.user.email))
+                CustomUser.objects.get(email=request.user.email))
         messages.add_message(request, messages.INFO,
                              f'Подписка на треки прошла успешно')
-
-
-# TODO: Узнать как делать фильтрацию (отображать только треки, выбранные пользователем)
-# Сделать кастомный виджет на поле в котором динамически фильтровать через JS
-class TaskUrlForm(forms.ModelForm):
-    class Meta:
-        model = TrackChoice
-        # fields = ['participant', 'track', 'task_url']
-        exclude = ['change_time', 'status']
-
-    task_url = forms.URLField(
-        max_length=500,
-        widget=forms.TextInput,
-        help_text='Введите ссылку на тестовое задание',
-        label='Ссылка на тестовое задание',
-    )
 
 
 # TODO: Добавить кастомную фильтрацию по дате
 @admin.register(TrackChoice)
 class TrackChoiceAdmin(admin.ModelAdmin):
+    change_list_template = 'event_stats_app/track_choice_changelist.html'
+
     list_display = ('participant', 'track', 'status')
     list_filter = ('status', 'track__title', 'track__event', 'track__event__date')
     search_fields = ('participant__email', 'track__title')
 
     actions = ['add_link_to_task', 'export_as_csv']
 
+    def get_urls(self):
+        urls = super().get_urls()
+        my_urls = [
+            path('add-link-to-task/', self.add_link_to_task, name='task_link'),
+            # path('add-link-to-task/', AttachUrlWizard.as_view(), name='task_link'),
+        ]
+        return my_urls + urls
+
+
     @admin.action(description='Прикрепить ссылку на ТЗ')
     def add_link_to_task(self, request):
         """
         Добавление ссылки на тестовое и изменение статуса на ON_REVIEW
         """
-        print('HELOOOO')
+        # return AttachUrlWizard.as_view()
         if request.method == 'POST':
             # TODO: Узнать как лучше обрабатывать форму
             form = TaskUrlForm(request.POST)
@@ -182,20 +180,13 @@ class TrackChoiceAdmin(admin.ModelAdmin):
             track = form.cleaned_data.get('track')
             participant = form.cleaned_data.get('participant')
             track_choice = TrackChoice.objects.get(participant_id=participant.id, track_id=track.id)
-            track_choice.task_url = form.data.get('task_url')
+            track_choice.task_url = form.cleaned_data.get('task_url')
             track_choice.status = ParticipantStatus.ON_REVIEW
             track_choice.save()
             return redirect('..')
         form = TaskUrlForm()
         payload = {'form': form}
         return render(request, 'event_stats_app/task_url_form.html', payload)
-
-    def get_urls(self):
-        urls = super().get_urls()
-        my_urls = [
-            path('add-link-to-task/', self.add_link_to_task, name='task_link'),
-        ]
-        return my_urls + urls
 
     add_link_to_task.action_type = 1
     add_link_to_task.action_url = 'event_stats_app/trackchoice/add-link-to-task'

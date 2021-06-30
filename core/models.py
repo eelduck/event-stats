@@ -8,8 +8,7 @@ from django.utils.translation import gettext_lazy as _
 from core.managers import UserManager
 
 
-# Переименовать
-class User(AbstractBaseUser, PermissionsMixin):
+class CustomUser(AbstractBaseUser, PermissionsMixin):
     """
     An abstract base class implementing a fully featured User model with
     admin-compliant permissions.
@@ -23,7 +22,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     city = models.CharField(_('city'), max_length=64, blank=True)
 
     # TODO: Стоит ли вынести с Participant Model?
-    interested = models.ManyToManyField('User', related_name='interested_participants',
+    interested = models.ManyToManyField('CustomUser', related_name='interested_participants',
                                         verbose_name=_('Заинтересованные сотрудники'), blank=True)
 
     is_staff = models.BooleanField(

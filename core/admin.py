@@ -1,45 +1,17 @@
-import pandas as pd
 from django.contrib import admin, messages
-from django.contrib.auth.models import Group
 from django.forms import forms
-from django.shortcuts import redirect, render
 from django.urls import path
-from core.models import User
-from core.utils import ExportCsvMixin, ExcelImportService
+from core.models import CustomUser
+from core.utils import ExportCsvMixin
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.admin import UserAdmin
-from django.apps import apps
-from django.contrib.auth import models
-
-
-def patch_group_label_name():
-    """
-    Нахождение модели Group в списке всех моделей
-    и изменение названия/принадлежности к приложению
-
-    https://stackoverflow.com/questions/28121289/how-to-move-model-to-the-other-section-in-djangos-site-admin
-    +
-    https://stackoverflow.com/questions/3599524/get-class-name-of-django-model
-    """
-    models_list = apps.get_models(models)
-    # Looks like monkey patching
-    group_model_index = 3
-    for index, model in enumerate(models_list):
-        if model.__name__ == 'Group':
-            group_model_index = index
-            break
-
-    models_list[group_model_index]._meta.app_label = 'core'
-
-
-patch_group_label_name()
 
 
 class ExcelImportForm(forms.Form):
     excel_file = forms.FileField()
 
 
-@admin.register(User)
+@admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin, ExportCsvMixin):
     add_form_template = 'admin/auth/user/add_form.html'
     fieldsets = (
@@ -71,13 +43,12 @@ class CustomUserAdmin(UserAdmin, ExportCsvMixin):
                        self.admin_site.admin_view(self.user_change_password),
                        name='auth_user_password_change',
                    ),
-                   # path('export_as_csv/', self._export_as_csv)
                ] + super().get_urls()
 
     @admin.action(description='Подписаться выбранных участников')
     def subscribe_to_participant(self, request, queryset):
         for participant in queryset:
             participant.interested.add(
-                User.objects.get(email=request.user.email))
+                CustomUser.objects.get(email=request.user.email))
         messages.add_message(request, messages.INFO,
                              f'Подписка на участников прошла успешно')
