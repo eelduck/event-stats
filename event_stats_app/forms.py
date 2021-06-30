@@ -19,8 +19,6 @@ class TaskUrlForm1(forms.ModelForm):
         exclude = ['change_time', 'status', 'track', 'task_url']
 
 
-
-
 class TaskUrlForm2(forms.ModelForm):
     class Meta:
         model = TrackChoice
