@@ -19,8 +19,6 @@ from django.urls import path, include
 from event_stats_app import views
 
 urlpatterns = [
-    path('admin/import-excel/', views.import_excel, name="import_excel"),
-    path('admin/', admin.site.urls),
-    path('', include('core.urls')),
-    path('', include('event_stats_app.urls')),
+    path('import-excel/', views.import_excel, name="import_excel"),
+    path('', admin.site.urls),
 ]

@@ -1,4 +1,4 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.forms import forms
 from django.urls import path
 from core.models import CustomUser
@@ -14,7 +14,6 @@ class ExcelImportForm(forms.Form):
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin, ExportCsvMixin):
     add_form_template = 'admin/auth/user/add_form.html'
-    change_list_template = 'core/user_changelist.html'
     fieldsets = (
         (None, {'fields': ('password',)}),
         (_('Personal info'), {'fields': ('first_name', 'last_name', 'email', 'phone_number', 'city')}),
@@ -31,11 +30,11 @@ class CustomUserAdmin(UserAdmin, ExportCsvMixin):
         }),
     )
     list_display = ('email', 'first_name', 'last_name', 'city', 'is_staff')
-    list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups', 'city')
+    list_filter = ('is_staff', 'is_superuser', 'groups', 'city')
     search_fields = ('first_name', 'last_name', 'email')
     ordering = ('email',)
-    filter_horizontal = ('groups', 'user_permissions',)
-    actions = ['export_as_csv']
+    filter_horizontal = ('groups', 'user_permissions', 'interested',)
+    actions = ['subscribe_to_participant', 'export_as_csv']
 
     def get_urls(self):
         return [
@@ -45,3 +44,11 @@ class CustomUserAdmin(UserAdmin, ExportCsvMixin):
                        name='auth_user_password_change',
                    ),
                ] + super().get_urls()
+
+    @admin.action(description='Подписаться выбранных участников')
+    def subscribe_to_participant(self, request, queryset):
+        for participant in queryset:
+            participant.interested.add(
+                CustomUser.objects.get(email=request.user.email))
+        messages.add_message(request, messages.INFO,
+                             f'Подписка на участников прошла успешно')
