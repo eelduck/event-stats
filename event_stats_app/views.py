@@ -1,7 +1,5 @@
 from django.contrib import messages
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from django.template import loader
+from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404, render
 from formtools.wizard.views import SessionWizardView
 
@@ -10,7 +8,6 @@ from core.utils import ExcelImportService
 from .forms import TaskUrlForm1, TaskUrlForm2
 from .models import CustomUser, TrackChoice, ParticipantStatus
 from .models import Event
-from django.template import Context
 
 from django.utils.translation import gettext_lazy as _
 
@@ -97,31 +94,6 @@ def import_excel(request):
     )
 
 
-# class CustomSessionWizardView(SessionWizardView):
-#     """
-#     Переопределение функции, а точнее одного поля для передачи дополнительных значений в генерируемые формы
-#     """
-#
-#     def render_next_step(self, form, **kwargs):
-#         """
-#         This method gets called when the next step/form should be rendered.
-#         `form` contains the last/current form.
-#         prev_step_data -
-#         """
-#         # get the form instance based on the data from the storage backend
-#         # (if available).
-#         next_step = self.steps.next
-#         new_form = self.get_form(
-#             next_step,
-#             data=self.storage.get_step_data(next_step),
-#             files=self.storage.get_step_files(next_step),
-#         )
-#         new_form.prev_step_data = kwargs.get('prev_step_data')
-#         # change the stored current step
-#         self.storage.current_step = next_step
-#         return self.render(new_form, **kwargs)
-
-
 class AttachUrlWizard(SessionWizardView):
     template_name = 'event_stats_app/task_url_form.html'
     form_list = [TaskUrlForm1, TaskUrlForm2]
@@ -139,17 +111,11 @@ class AttachUrlWizard(SessionWizardView):
         return form
 
     def done(self, form_list, **kwargs):
-        c = Context({
-            'form_list': [x.cleaned_data for x in form_list],
-            'form_dict': kwargs.get('form_dict'),
-            'all_cleaned_data': self.get_all_cleaned_data()
-        })
-        for form in self.form_list.keys():
-            c[form] = self.get_cleaned_data_for_step(form)
+        info_step = str(1)
+        data = self.get_cleaned_data_for_step(info_step)
 
-        # Cохранение в БД
-        tc = c.dicts[1]['1']['track_choice']
-        task_url = c.dicts[1]['1']['task_url']
+        tc = data.get('track_choice')
+        task_url = data.get('task_url')
         tc.task_url = task_url
         tc.save()
 

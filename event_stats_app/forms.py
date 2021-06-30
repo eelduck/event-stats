@@ -9,33 +9,15 @@ from django.utils.translation import gettext_lazy as _
 class TaskUrlForm(forms.ModelForm):
     class Meta:
         model = TrackChoice
-        # fields = ['participant', 'track', 'task_url']
         exclude = ['change_time', 'status']
 
 
 class TaskUrlForm1(forms.ModelForm):
     class Meta:
         model = TrackChoice
-        # fields = ['participant', 'track', 'task_url']
         exclude = ['change_time', 'status', 'track', 'task_url']
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        print(self.data)
-
-
-# class TaskUrlForm2(forms.ModelForm):
-#     class Meta:
-#         model = TrackChoice
-#         # fields = ['participant', 'track', 'task_url']
-#         exclude = ['change_time', 'status', 'participant']
-#
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         print(self.data)
 
 class TaskUrlForm2(forms.Form):
     track_choice = forms.ModelChoiceField(queryset=None, label=_('Выбор трека'))
     task_url = forms.CharField(max_length=255, label=_('Ссылка на тестовое задание'))
-
-
