@@ -5,6 +5,11 @@ name = "pypi"
 
 [packages]
 django = "*"
+pandas = "*"
+xlrd = "*"
+openpyxl = "*"
+django-formtools = "*"
+django-simpleui = "*"
 
 [dev-packages]
 

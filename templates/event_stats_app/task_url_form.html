@@ -1,0 +1,34 @@
+{% extends 'admin/base.html' %}
+{% load i18n %}
+
+{% block head %}
+    {{ wizard.form.media }}
+{% endblock %}
+
+{% block content %}
+    <p>Шаг {{ wizard.steps.step1 }} из {{ wizard.steps.count }}</p>
+    <div>
+        <form action="" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <table>
+                {{ wizard.management_form }}
+                {% if wizard.form.forms %}
+                    {{ wizard.form.management_form }}
+                    {% for form in wizard.form.forms %}
+                        {{ form }}
+                    {% endfor %}
+                {% else %}
+                    {{ wizard.form }}
+                {% endif %}
+            </table>
+            {% if wizard.steps.prev %}
+                <button name="wizard_goto_step" type="submit"
+                        value="{{ wizard.steps.first }}">{% trans "Первый шаг" %}</button>
+                <button name="wizard_goto_step" type="submit"
+                        value="{{ wizard.steps.prev }}">{% trans "Предыдущий шаг" %}</button>
+            {% endif %}
+            <input type="submit" value="{% trans "Принять" %}"/>
+        </form>
+    </div>
+    <br/>
+{% endblock %}
