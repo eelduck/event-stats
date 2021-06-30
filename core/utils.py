@@ -7,7 +7,7 @@ from django.db.models import Model
 from django.http import HttpResponse
 from django.utils.translation import gettext_lazy as _
 
-from event_stats_app.models import User, Event, Track, TrackChoice, ParticipantStatus
+from event_stats_app.models import CustomUser, Event, Track, TrackChoice, ParticipantStatus
 
 
 class ExportCsvMixin:
@@ -150,7 +150,7 @@ class ExcelImportService:
     def _create_tc_dict(self):
         def get_participant_id(row):
             pprint(row)
-            return User.objects.get(email=row[self.user_email_header]).id
+            return CustomUser.objects.get(email=row[self.user_email_header]).id
 
         tc_df = self._create_model_df(self.tc_attributes)
         tc_df[self.tc_participant_attribute] = tc_df.apply(
@@ -208,7 +208,7 @@ class ExcelImportService:
             attributes=self.user_attributes,
             duplicates_subset=self.user_email_header
         )
-        self._add_objects(User, users)
+        self._add_objects(CustomUser, users)
 
         events = self._create_model_dict(
             attributes=self.event_attributes,

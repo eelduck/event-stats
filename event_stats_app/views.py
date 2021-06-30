@@ -8,7 +8,7 @@ from formtools.wizard.views import SessionWizardView
 from core.admin import ExcelImportForm
 from core.utils import ExcelImportService
 from .forms import TaskUrlForm1, TaskUrlForm2
-from .models import User, TrackChoice, ParticipantStatus
+from .models import CustomUser, TrackChoice, ParticipantStatus
 from .models import Event
 from django.template import Context
 
@@ -57,7 +57,7 @@ def stat(request):
 
 # users statistic
 def user_stat(request):
-    users = User.objects.order_by('email')
+    users = CustomUser.objects.order_by('email')
     context = {
         'users_list': users,
     }
@@ -66,14 +66,14 @@ def user_stat(request):
 
 # detail user statistic
 def user_detail(request, user_id):
-    user = get_object_or_404(User, pk=user_id)
+    user = get_object_or_404(CustomUser, pk=user_id)
     return render(request, 'stat/user_detail.html', {'user': user})
 
 
 # events statistic
 def event_stat(request, event_id):
     event = get_object_or_404(Event, pk=event_id)
-    users_count = User.objects.filter(tracks__event=event_id).count()
+    users_count = CustomUser.objects.filter(tracks__event=event_id).count()
 
     context = {
         'event': event,

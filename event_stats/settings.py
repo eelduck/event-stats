@@ -132,4 +132,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # TODO: После добавление кастомного юзера добавить путь до него
 # AUTH_USER_MODEL = 'путь.к.модели'
 # 'events_stat_app.models.MyUserModel'
-AUTH_USER_MODEL = 'core.User'
+AUTH_USER_MODEL = 'core.CustomUser'
