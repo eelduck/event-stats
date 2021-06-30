@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'event_stats_app.apps.EventStatsAppConfig',
     'core.apps.CoreConfig',
-    'bootstrap4',
 ]
 
 MIDDLEWARE = [
